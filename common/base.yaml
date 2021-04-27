@@ -1,0 +1,17 @@
+# Base config that is shared across all devices
+esphome:
+  name: ${node_name}
+  platform: ${node_platform}
+  board: ${node_board}
+  build_path: ./build/${node_name}
+
+logger:
+
+ota:
+
+wifi:
+  ssid: !secret WIFI_SSID
+  password: !secret  WIFI_PASSWORD
+
+mqtt:
+  broker: 192.168.50.18
