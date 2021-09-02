@@ -1,4 +1,4 @@
-# Base config that is shared across all devices
+# Base config that is shared across all devices!
 esphome:
   name: ${node_name}
   platform: ${node_platform}
