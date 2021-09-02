@@ -16,10 +16,12 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case WiFi connection fails
   ap:
-    ssid: ${friendly_name}
-    password: !secret AP_PASSWORD
+    ssid: !secret WIFI2_SSID 
+    password: !secret WIFI2_PASSWORD
 
 captive_portal:
 
 mqtt:
-  broker: 192.168.50.18
+  broker: !secret MQTT_HOST
+  username: !secret MQTT_USER
+  password: !secret MQTT_PASSWORD
