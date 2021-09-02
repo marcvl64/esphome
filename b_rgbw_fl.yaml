@@ -1,0 +1,8 @@
+substitutions:
+  node_name: overhead-fl
+  friendly_name: overhead front left light
+  light_name: fl Light
+  switch_name: fl Switch
+
+packages:
+  device_base: !include devices/shelly-rgbw2.yaml

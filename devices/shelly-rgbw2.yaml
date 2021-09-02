@@ -1,0 +1,76 @@
+substitutions:
+  node_platform: ESP8266
+  # Set modwifi on Shelly devices since they have 2MB of flash (as per https://community.home-assistant.io/t/power-usage-reading-on-shelly-rgbw2/213520)
+  node_board: modwifi
+
+packages:
+  device_base: !include ../common/base.yaml
+  basic_sensors: !include ../common/basic_sensors.yaml
+
+# All RGBW controllers support master on/off switch
+mqtt:
+  on_message:
+    - topic: "test-master-switch/switch/master_switch/state"
+      then:
+        - light.turn_off: device_light
+
+output:
+  - platform: esp8266_pwm
+    pin: GPIO12
+    frequency: 1000 Hz
+    id: pwm_r
+
+  - platform: esp8266_pwm
+    pin: GPIO15
+    frequency: 1000 Hz
+    id: pwm_g
+
+  - platform: esp8266_pwm
+    pin: GPIO14
+    frequency: 1000 Hz
+    id: pwm_b
+
+  - platform: esp8266_pwm
+    pin: GPIO4
+    frequency: 1000 Hz
+    id: pwm_w
+
+light:
+  - platform: rgbw
+    name: ${light_name}
+    red: pwm_r
+    green: pwm_g
+    blue: pwm_b
+    white: pwm_w
+    effects:
+      - random:
+      - strobe:
+      - flicker:
+    id: device_light
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+    name: ${switch_name}
+    on_state:
+      then:
+        - light.toggle: device_light
+    internal: true
+    id: device_switch
+
+sensor:
+  - platform: adc
+    id: voltage_analog_reading
+    pin: A0
+    name: ${friendly_name} Power 
+    unit_of_measurement: W 
+    icon: mdi:flash-circle
+    update_interval: 10s
+    filters:
+      - calibrate_linear:
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 0.36523 -> 0.0
+          - 0.36621 -> 0.2
+          - 0.36719 -> 0.8
+          - 0.36914 -> 1.9

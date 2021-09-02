@@ -1,0 +1,9 @@
+substitutions:
+  node_platform: ESP8266
+  node_board: esp01_1m
+
+packages:
+  device_base: !include ../common/base.yaml
+  basic_sensors: !include ../common/basic_sensors.yaml
+
+

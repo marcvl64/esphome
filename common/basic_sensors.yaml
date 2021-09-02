@@ -1,0 +1,64 @@
+binary_sensor:
+  - platform: status
+    name: ${friendly_name} Status
+    id: device_status
+
+sensor:
+  - platform: wifi_signal
+    name: ${friendly_name} WiFi Signal Strength
+    id: device_wifi_signal
+    update_interval: 15s
+
+  - platform: uptime
+    name: ${friendly_name} Uptime Raw
+    id: device_uptime_raw
+    update_interval: 60s
+    internal: true
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: device_uptime
+            state: !lambda |-
+              int seconds = round(id(device_uptime_raw).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? String(days) + "d " : "") +
+                (hours ? String(hours) + "h " : "")
+              ).c_str();
+
+text_sensor:
+  - platform: version
+    name: ${friendly_name} ESPHome Version
+    id: esphome_version
+
+  - platform: wifi_info
+    ip_address:
+      name: ${friendly_name} IP Address
+      id: ip_address
+
+    ssid:
+      name: ${friendly_name} SSID
+      id: ssid
+
+    bssid:
+      name: ${friendly_name} BSSID
+      id: bssid
+
+    mac_address:
+      name: ${friendly_name} MAC Address
+      id: mac_address
+
+  - platform: template
+    name: ${friendly_name} Uptime
+    id: device_uptime
+    icon: mdi:clock-start
+
+switch:
+  - platform: restart
+    name: ${friendly_name} Restart
+    id: device_restart

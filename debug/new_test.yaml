@@ -1,0 +1,150 @@
+substitutions:
+  node_platform: ESP8266
+  node_board: esp01_1m
+  node_name: test-light
+esphome:
+  name: test-light
+  platform: ESP8266
+  board: esp01_1m
+  build_path: ./build/test-light
+  arduino_version: espressif8266@2.6.2
+  platformio_options: {}
+  esp8266_restore_from_flash: false
+  board_flash_mode: dout
+  includes: []
+  libraries: []
+logger:
+  baud_rate: 115200
+  tx_buffer_size: 512
+  hardware_uart: UART0
+  level: DEBUG
+  logs: {}
+  esp8266_store_log_strings_in_flash: true
+ota:
+  safe_mode: true
+  port: 8266
+  password: ''
+  reboot_timeout: 5min
+  num_attempts: 10
+wifi:
+  domain: .local
+  reboot_timeout: 15min
+  power_save_mode: NONE
+  fast_connect: false
+  output_power: 20.0
+  networks:
+  - ssid: !secret 'WIFI_SSID'
+    password: !secret 'WIFI_PASSWORD'
+    priority: 0.0
+  use_address: test-light.local
+mqtt:
+  broker: 192.168.50.18
+  port: 1883
+  username: ''
+  password: ''
+  discovery: true
+  discovery_retain: true
+  discovery_prefix: homeassistant
+  topic_prefix: test-light
+  keepalive: 15s
+  reboot_timeout: 15min
+  birth_message:
+    topic: test-light/status
+    payload: online
+    qos: 0
+    retain: true
+  will_message:
+    topic: test-light/status
+    payload: offline
+    qos: 0
+    retain: true
+  shutdown_message:
+    topic: test-light/status
+    payload: offline
+    qos: 0
+    retain: true
+  log_topic:
+    topic: test-light/debug
+    qos: 0
+    retain: true
+light:
+- platform: rgbw
+  name: shelly_rgbw2
+  red: pwm_r
+  green: pwm_g
+  blue: pwm_b
+  white: pwm_w
+  effects:
+  - random:
+      transition_length: 7500ms
+      update_interval: 10s
+      name: Random
+  - strobe:
+      colors:
+      - state: true
+        duration: 500ms
+        brightness: 1.0
+        red: 1.0
+        green: 1.0
+        blue: 1.0
+        white: 1.0
+      - state: false
+        duration: 500ms
+        brightness: 1.0
+        red: 1.0
+        green: 1.0
+        blue: 1.0
+        white: 1.0
+      name: Strobe
+  - flicker:
+      alpha: 0.95
+      intensity: 0.015
+      name: Flicker
+  id: lightid
+  restore_mode: RESTORE_DEFAULT_OFF
+  gamma_correct: 2.8
+  default_transition_length: 1s
+  color_interlock: false
+binary_sensor:
+- platform: gpio
+  pin:
+    number: 5
+    mode: INPUT
+    inverted: false
+  name: Switch Shelly rgbw
+  on_state:
+  - then:
+    - light.toggle:
+        id: lightid
+  internal: true
+  id: switchid
+output:
+- platform: esp8266_pwm
+  pin:
+    number: 12
+    mode: OUTPUT
+    inverted: false
+  frequency: 1000.0
+  id: pwm_r
+- platform: esp8266_pwm
+  pin:
+    number: 15
+    mode: OUTPUT
+    inverted: false
+  frequency: 1000.0
+  id: pwm_g
+- platform: esp8266_pwm
+  pin:
+    number: 14
+    mode: OUTPUT
+    inverted: false
+  frequency: 1000.0
+  id: pwm_b
+- platform: esp8266_pwm
+  pin:
+    number: 4
+    mode: OUTPUT
+    inverted: false
+  frequency: 1000.0
+  id: pwm_w
+

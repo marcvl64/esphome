@@ -1,0 +1,8 @@
+substitutions:
+  node_name: overhead-br
+  friendly_name: overhead back right light
+  light_name: br Light
+  switch_name: br Switch
+
+packages:
+  device_base: !include devices/shelly-rgbw2.yaml
