@@ -1,5 +1,0 @@
-substitutions:
-  node_name: test-light
-
-packages:
-  device_base: !include devices/shelly-rgbw2-o.yaml

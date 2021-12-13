@@ -1,0 +1,20 @@
+substitutions:
+  node_name: g2-living-room-sensor 
+  friendly_name: Living Room Sensor 
+  switch_name_1: Switch 1
+  switch_name_2: Switch 2
+
+packages:
+  device_base: !include devices/shelly-uni.yaml
+
+wifi:
+  use_address: test-master-switch.local
+
+sensor:
+  - platform: dht
+    pin: GPIO05
+    temperature:
+      name: "Living Room Temperature"
+    humidity:
+      name: "Living Room Humidity"
+    update_interval: 60s
