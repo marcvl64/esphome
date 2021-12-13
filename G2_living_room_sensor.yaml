@@ -7,9 +7,6 @@ substitutions:
 packages:
   device_base: !include devices/shelly-uni.yaml
 
-wifi:
-  use_address: test-master-switch.local
-
 sensor:
   - platform: dht
     pin: GPIO05
