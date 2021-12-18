@@ -1,0 +1,8 @@
+substitutions:
+  node_name: b6-nutone-cvac
+  friendly_name: "B6 - Nutone - CVAC"
+  switch_name_1: Switch Nutone
+  switch_name_2: Switch CVAC
+
+packages:
+  device_base: !include devices/shelly-25.yaml

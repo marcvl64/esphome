@@ -1,0 +1,30 @@
+substitutions:
+  node_name: b8-dometic-ac
+  friendly_name: "B8 - Dometic ACs"
+
+packages:
+  device_base: !include devices/shelly-em.yaml
+
+# Using 2 50A clamps
+
+sensor:
+  - platform: ade7953
+    voltage:
+      name: ${friendly_name} Voltage
+    current_a:
+      name: ${friendly_name} Current Bedroom AC 
+    active_power_a:
+      id: power_a
+      name: ${friendly_name} Power Bedroom AC
+      accuracy_decimals: 0
+      filters:
+      - lambda: if (x <= 0.0) return 0; else return x*1.156612516;;
+    current_b:
+      name: ${friendly_name} Current Living Room AC 
+    active_power_b:
+      id: power_b
+      name: ${friendly_name} Power Living Room AC
+      accuracy_decimals: 0
+      filters:
+      - lambda: if (x <= 0.0) return 0; else return x*1.156612516;;
+    update_interval: 5s

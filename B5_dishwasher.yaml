@@ -1,0 +1,7 @@
+substitutions:
+  node_name: b5-capsule-dishwasher
+  friendly_name: "B5 - Dishwasher"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-1pm.yaml

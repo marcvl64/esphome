@@ -1,0 +1,7 @@
+substitutions:
+  node_name: c3-outlet-linnen-cabinet
+  friendly_name: "C3 - Linnen Cabinet"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-1pm.yaml

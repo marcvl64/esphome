@@ -1,0 +1,22 @@
+substitutions:
+  node_name: b3-alde-heater
+  friendly_name: "B3 - Alde Heater"
+
+packages:
+  device_base: !include devices/shelly-em.yaml
+
+# Using 1 50A clamp (P1 port). P2 port is not used.
+
+sensor:
+  - platform: ade7953
+    voltage:
+      name: ${friendly_name} Voltage
+    current_a:
+      name: ${friendly_name} Current
+    active_power_a:
+      id: power_a
+      name: ${friendly_name} Power
+      accuracy_decimals: 0
+      filters:
+      - lambda: if (x <= 0.0) return 0; else return x*1.156612516;;
+    update_interval: 5s

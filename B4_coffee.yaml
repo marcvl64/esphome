@@ -1,0 +1,7 @@
+substitutions:
+  node_name: b4-bosch-coffee
+  friendly_name: "B4 - Coffee"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-1pm.yaml

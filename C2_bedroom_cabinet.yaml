@@ -1,0 +1,7 @@
+substitutions:
+  node_name: c2-outlet-bedroom-cabinet
+  friendly_name: "C2 - Bedroom Cabinet"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-1pm.yaml

@@ -1,0 +1,7 @@
+substitutions:
+  node_name: c1-outlet-pantry
+  friendly_name: "C1 - Pantry"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-1pm.yaml
