@@ -1,6 +1,6 @@
 substitutions:
   node_name: b1-norcold-fridge
-  friendly_name: Fridge
+  friendly_name: "B1 - Fridge"
   switch_name: Switch 1
 
 packages:

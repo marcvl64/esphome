@@ -1,17 +1,15 @@
 substitutions:
   node_name: g2-living-room-sensor 
   friendly_name: Living Room Sensor 
-  switch_name_1: Switch 1
-  switch_name_2: Switch 2
 
 packages:
-  device_base: !include devices/shelly-uni.yaml
+  device_base: !include devices/atom-lite.yaml
 
 sensor:
-  - platform: dht
-    pin: GPIO05
+  - platform: scd4x
+    co2:
+      name: "Living Room CO2"
     temperature:
       name: "Living Room Temperature"
     humidity:
       name: "Living Room Humidity"
-    update_interval: 60s

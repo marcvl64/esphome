@@ -6,3 +6,67 @@ substitutions:
 
 packages:
   device_base: !include devices/shelly-rgbw2.yaml
+
+# Light can be turned off by Living Room Master Switch
+mqtt:
+  on_message:
+    - topic: "d5-8-4chan-living/switch/master_switch/state"
+      then:
+        - light.turn_off: device_light
+
+# This device is connected to an RGBW strip
+light:
+  - platform: rgbw
+    name: ${light_name}
+    red: pwm_r
+    green: pwm_g
+    blue: pwm_b
+    white: pwm_w
+    effects:
+      - random:
+      - strobe:
+      - flicker:
+    id: device_light
+
+# Short press on momentary switch toggles light
+# Pressing and holding will dim the light
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+    name: ${switch_name}
+    internal: true
+    id: device_switch
+    on_click:
+      then:
+        - light.toggle: device_light
+    on_press:
+      then:
+        - if:
+            condition:
+              light.is_off: device_light
+            then:
+              - delay: 0.5s
+              - while:
+                  condition:
+                    binary_sensor.is_on: device_switch
+                  then:
+                    - light.dim_relative:
+                        id: device_light
+                        relative_brightness: 5%
+                        transition_length: 0.1s
+                    - delay: 0.4s
+            else:
+              - delay: 0.5s
+              - while:
+                  condition:
+                    and:
+                      - binary_sensor.is_on: device_switch
+                      - light.is_on: device_light
+                  then:
+                    - light.dim_relative:
+                        id: device_light
+                        relative_brightness: -5%
+                        transition_length: 0.1s
+                    - delay: 0.4s
+

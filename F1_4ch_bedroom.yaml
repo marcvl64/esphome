@@ -1,0 +1,140 @@
+substitutions:
+  node_name: f1-4ch-bedroom
+  friendly_name: bedroom lights
+  light_name_1: bedroom light 1
+  light_name_2: bedroom light 2
+  light_name_3: bedroom light 3
+  light_name_4: bedroom light 4
+  switch_name: bedroom Switch
+
+packages:
+  device_base: !include devices/shelly-rgbw2.yaml
+
+# Light can be turned off by Living Room Master Switch
+mqtt:
+  on_message:
+    - topic: "d5-8-4chan-living/switch/master_switch/state"
+      then:
+        - light.turn_off: device_light_1
+        - light.turn_off: device_light_2
+        - light.turn_off: device_light_3
+        - light.turn_off: device_light_4
+
+# This device is connected to 4 LED lights
+light:
+  - platform: monochromatic
+    name: ${light_name_1}
+    output: pwm_r
+    id: device_light_1
+
+  - platform: monochromatic
+    name: ${light_name_2}
+    output: pwm_g
+    id: device_light_2
+
+  - platform: monochromatic
+    name: ${light_name_3}
+    output: pwm_b
+    id: device_light_3
+
+  - platform: monochromatic
+    name: ${light_name_4}
+    output: pwm_w
+    id: device_light_4
+
+# Short press on momentary switch toggles light
+# Pressing and holding will dim the light
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+    name: ${switch_name}
+    internal: true
+    id: device_switch
+    on_click:
+      then:
+        - if:
+            condition:
+              - light.is_off: device_light_1
+              - light.is_off: device_light_2
+              - light.is_off: device_light_3
+              - light.is_off: device_light_4
+            then:
+              - light.turn_on:
+                  id: device_light_1
+                  brightness: 1.0
+              - light.turn_on:
+                  id: device_light_2
+                  brightness: 1.0
+              - light.turn_on:
+                  id: device_light_3
+                  brightness: 1.0
+              - light.turn_on:
+                  id: device_light_4
+                  brightness: 1.0
+            else:
+              - light.turn_off: device_light_1
+              - light.turn_off: device_light_2
+              - light.turn_off: device_light_3
+              - light.turn_off: device_light_4
+ 
+    on_press:
+      then:
+        - if:
+            condition:
+              light.is_off: device_light_1
+            then:
+              - delay: 0.5s
+              - while:
+                  condition:
+                    binary_sensor.is_on: device_switch
+                  then:
+                    - light.dim_relative:
+                        id: device_light_1
+                        relative_brightness: 5%
+                        transition_length: 0.1s
+                    - delay: 0.1s
+                    - light.dim_relative:
+                        id: device_light_2
+                        relative_brightness: 5%
+                        transition_length: 0.1s
+                    - delay: 0.1s
+                    - light.dim_relative:
+                        id: device_light_3
+                        relative_brightness: 5%
+                        transition_length: 0.1s
+                    - delay: 0.1s
+                    - light.dim_relative:
+                        id: device_light_4
+                        relative_brightness: 5%
+                        transition_length: 0.1s
+                    - delay: 0.1s
+            else:
+              - delay: 0.5s
+              - while:
+                  condition:
+                    and:
+                      - binary_sensor.is_on: device_switch
+                      - light.is_on: device_light_1
+                  then:
+                    - light.dim_relative:
+                        id: device_light_1
+                        relative_brightness: -5%
+                        transition_length: 0.1s
+                    - delay: 0.1s
+                    - light.dim_relative:
+                        id: device_light_2
+                        relative_brightness: -5%
+                        transition_length: 0.1s
+                    - delay: 0.1s
+                    - light.dim_relative:
+                        id: device_light_3
+                        relative_brightness: -5%
+                        transition_length: 0.1s
+                    - delay: 0.1s
+                    - light.dim_relative:
+                        id: device_light_4
+                        relative_brightness: -5%
+                        transition_length: 0.1s
+                    - delay: 0.1s
+

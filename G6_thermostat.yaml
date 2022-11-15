@@ -1,0 +1,595 @@
+substitutions:
+  node_name: g6-thermostat 
+  friendly_name: Thermostat 
+  target_temp_normal: 70 F
+  target_temp_away: 75 F
+  tft_url: http://192.168.50.37:8123/local/nspanel_beastie.tft
+
+packages:
+  device_base: !include devices/sonoff-nsp.yaml
+
+esphome:
+  includes:
+    - devices/sonoff-nsp.h
+
+globals:
+  - id: left_button_status
+    type: int
+    initial_value: "0"
+  - id: bg
+    type: int
+    initial_value: "1" # Screen background set to grey
+
+#############################################################
+########### SUBSCRIBE TO MQTT TOPICS     ####################
+########### FROM VICTRON SYSTEM          ####################
+#############################################################
+mqtt:
+  on_json_message:
+    - topic: venus-home/N/d41243b5183f/vebus/276/Ac/ActiveIn/L1/P 
+      then:
+        - lambda: 'id(disp1).send_command_printf("acinput=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/vebus/276/Ac/In/1/CurrentLimit
+      then:
+        - lambda: 'id(disp1).send_command_printf("invinput=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/vebus/276/Ac/Out/L1/P
+      then:
+        - lambda: 'id(disp1).send_command_printf("acoutput=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/battery/279/Soc
+      then:
+        - lambda: 'id(disp1).send_command_printf("battsoc=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/battery/279/Dc/0/Power
+      then:
+        - lambda: 'id(disp1).send_command_printf("battpower=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/solarcharger/278/Yield/Power
+      then:
+        - lambda: 'id(disp1).send_command_printf("solarpower=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/system/0/Dc/System/Power
+      then:
+        - lambda: 'id(disp1).send_command_printf("dcoutput=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/vebus/276/Mode
+      then:
+        - lambda: 'id(disp1).send_command_printf("invmode=%d",int(x["value"]));' 
+
+
+#############################################################
+########### CONFIGURE NEXTION SCREEN ########################
+#############################################################
+
+display:
+  - platform: nextion
+    id: disp1
+    uart_id: tf_uart
+    tft_url: $tft_url
+    # A little fun...
+    on_setup:
+      then:
+        - lambda: |-
+            id(disp1).set_component_text_printf(
+              "t0","%s", "TURN ACs ON"
+            );
+#            id(disp1).set_component_text_printf(
+#              "tl", "%.1f ""\xb0""F", id(tl).state * (9.0/5.0) +32.0
+#            );
+#            id(disp1).set_component_text_printf(
+#              "tb", "%.1f ""\xb0""F", id(tb).state * (9.0/5.0) +32.0
+#            );
+#            id(disp1).set_component_text_printf(
+#              "hl", "%.1f ""\x25""", id(hl).state
+#            );
+#          id(disp1).set_component_text_printf(
+#             "hb", "%.1f ""\x25""", id(hb).state
+#
+#            );
+        - rtttl.play: "twobits:d=4,o=5,b=220:c6,8g,8g,a,g,p,b,c6"
+
+#############################################################
+########### CONFIGURE AC OUTPUT      ########################
+########### BEDROOM AC (GPIO 22)     ########################
+#############################################################
+switch:
+  - platform: custom
+    lambda: |-
+      auto AC_Turn_on_high_fan_bed= new AC_Turn_on_high_fan(22);
+      App.register_component(AC_Turn_on_high_fan_bed);
+      return {AC_Turn_on_high_fan_bed};
+
+    switches:
+      name: "AC high fan bed"
+      id: ac_high_fan_bed
+
+  - platform: custom
+    lambda: |-
+      auto AC_Turn_on_low_fan_bed= new AC_Turn_on_low_fan(22);
+      App.register_component(AC_Turn_on_low_fan_bed);
+      return {AC_Turn_on_low_fan_bed};
+
+    switches:
+      name: "AC low fan bed"
+      id: ac_low_fan_bed
+
+  - platform: custom
+    lambda: |-
+      auto fan_low_bed= new Fan_Low(22);
+      App.register_component(fan_low_bed);
+      return {fan_low_bed};
+
+    switches:
+      name: "fan low bed"
+      id: fan_low_bed
+
+  - platform: custom
+    lambda: |-
+      auto ac_off_bed= new AC_Off(22);
+      App.register_component(ac_off_bed);
+      return {ac_off_bed};
+
+    switches:
+      name: "ac off bed"
+      id: ac_off_bed
+
+#############################################################
+########### CONFIGURE AC OUTPUT      ########################
+########### LIVING ROOM AC (GPIO 19) ########################
+#############################################################
+  - platform: custom
+    lambda: |-
+      auto AC_Turn_on_high_fan_living= new AC_Turn_on_high_fan(19);
+      App.register_component(AC_Turn_on_high_fan_living);
+      return {AC_Turn_on_high_fan_living};
+
+    switches:
+      name: "AC high fan living"
+      id: ac_high_fan_living
+
+  - platform: custom
+    lambda: |-
+      auto AC_Turn_on_low_fan_living= new AC_Turn_on_low_fan(19);
+      App.register_component(AC_Turn_on_low_fan_living);
+      return {AC_Turn_on_low_fan_living};
+
+    switches:
+      name: "AC low fan living"
+      id: ac_low_fan_living
+
+  - platform: custom
+    lambda: |-
+      auto fan_low_living= new Fan_Low(19);
+      App.register_component(fan_low_living);
+      return {fan_low_living};
+
+    switches:
+      name: "fan low living"
+      id: fan_low_living
+
+  - platform: custom
+    lambda: |-
+      auto ac_off_living= new AC_Off(19);
+      App.register_component(ac_off_living);
+      return {ac_off_living};
+
+    switches:
+      name: "ac off living"
+      id: ac_off_living
+
+sensor:
+#############################################################
+########### RETRIEVE ACTIVE PAGE         ####################
+########### UPDATE ALL COMPONENTS        ####################
+########### 0:HOME, 1: VICTRON, 2: SLEEP ####################
+#############################################################
+  - platform: nextion
+    variable_name: dp
+    id: active_page
+    on_value:
+      then:
+        - lambda: |-
+            id(disp1).send_command_printf("click m0,1"); 
+
+#############################################################
+########### RETRIEVE TEMP & HUMIDITY        #################
+########### FROM EXTERNAL SENSORS           #################
+  - platform: template
+    id: tb_t
+  - platform: template
+    id: tl_t
+  - platform: mqtt_subscribe
+    id: tb
+    topic: g1-bedroom-sensor/sensor/bedroom_temperature/state
+    on_value:
+      then:
+         - delay: 0ms
+         - lambda: 'id(tb_t).publish_state(x);'
+#        - lambda: 'id(disp1).set_component_text_printf("Home.tb", "%.1f ""\xb0""F", x * (9.0/5.0) +32.0);'
+#
+  - platform: mqtt_subscribe
+    id: tl
+    topic: g2-living-room-sensor/sensor/living_room_temperature/state
+    on_value:
+     then:
+         - delay: 0ms
+         - lambda: 'id(tl_t).publish_state(x);'
+#        - lambda: 'id(disp1).set_component_text_printf("Home.tl", "%.1f ""\xb0""F", x * (9.0/5.0) +32.0);'
+#
+#  - platform: mqtt_subscribe
+#    id: hb
+#    topic: g1-bedroom-sensor/sensor/bedroom_humidity/state
+#    on_value:
+#      then:
+#        - lambda: 'id(disp1).set_component_text_printf("Home.hb", "%.1f", x);'
+#
+#  - platform: mqtt_subscribe
+#    id: hl
+#    topic: g2-living-room-sensor/sensor/living_room_humidity/state
+#    on_value:
+#      then:
+#        - lambda: 'id(disp1).set_component_text_printf("Home.hl", "%.1f", x);'
+
+#############################################################
+#############################################################
+########### RETRIEVE BUILT-IN TEMP SENSOR   #################
+########### DISPLAY ON NEXTION SCREEN       #################
+#############################################################
+  - platform: ntc
+    id: temperature
+    sensor: resistance_sensor
+    calibration:
+      b_constant: 3950
+      reference_temperature: 25°C
+      reference_resistance: 10kOhm
+#    name: $friendly_name Temperature
+#    on_value:
+#      then:
+#        - lambda: |-
+#            id(disp1).set_component_text_printf("Home.tl", "%.1f ""\xb0""F", x * (9.0/5.0) +32.0);
+#            id(disp1).set_component_text_printf("Home.tb", "%.1f ""\xb0""F", x * (9.0/5.0) +32.0);
+
+#############################################################
+########### RETRIEVE THERMOSTAT MODE     ####################
+########### 1:OFF, 2: COOL, 3: FAN       ####################
+#############################################################
+  - platform: nextion
+    name: "AC Mode Living"
+    id: mode_living
+    variable_name: model
+    on_value:
+      then:
+        - climate.control:
+            id: living
+            mode: !lambda |-
+              if (id(mode_living).state == 1) {
+                return CLIMATE_MODE_OFF;
+              }
+              else if (id(mode_living).state == 2) {
+                return CLIMATE_MODE_COOL;
+              }
+              else {
+                return CLIMATE_MODE_FAN_ONLY;
+              }
+
+  - platform: nextion
+    name: "AC Model Bedroom"
+    id: mode_bed
+    variable_name: modeb
+    on_value:
+      then:
+        - climate.control:
+            id: bed
+            mode: !lambda |-
+              if (id(mode_bed).state == 1) {
+                return CLIMATE_MODE_OFF;
+              }
+              else if (id(mode_bed).state == 2) {
+               return CLIMATE_MODE_COOL;
+              }
+              else {
+                return CLIMATE_MODE_FAN_ONLY;
+              }
+
+#############################################################
+########### PUSH NEXTION CHANGES TO VICTRON #################
+###########                                 #################
+#############################################################
+  - platform: nextion
+    name: "Inverter Mode"
+    id: inv_mode
+    variable_name: invmode
+    on_value:
+      then:
+        - mqtt.publish_json:
+            topic: venus-home/W/d41243b5183f/vebus/276/Mode
+            payload: |-
+              root["value"]=int(x);
+ 
+  - platform: nextion
+    name: "Inverter Input"
+    id: inv_input
+    variable_name: invinput
+    on_value:
+      then:
+        - mqtt.publish_json:
+            topic: venus-home/W/d41243b5183f/vebus/276/Ac/In/1/CurrentLimit
+            payload: |-
+              root["value"]=int(x);
+ 
+binary_sensor:
+ 
+#############################################################
+########### DEFINE HARDWARE BUTTONS      ####################
+########### PAGE DEPENDENT FUNCTIONALITY ####################
+#############################################################
+  # Left HW button to toggle both ACs between COOL and OFF mode
+  - platform: gpio
+    name: $friendly_name Left Button
+    pin:
+      number: 14
+      inverted: true
+    on_press:
+      then:
+        - if: 
+            condition:
+              lambda: 'return id(left_button_status)==0;'
+            then:
+              - climate.control:
+                  id: bed
+                  mode: COOL
+              - climate.control:
+                  id: living
+                  mode: COOL
+              - lambda: |-
+                  id(disp1).send_command_printf("click q1,1");
+                  id(disp1).send_command_printf("click q5,1");
+                  id(left_button_status)=1;
+                  id(disp1).set_component_text_printf("Home.t0", "TURN ACs OFF");
+            else:
+              - climate.control:
+                  id: bed
+                  mode: "OFF"
+              - climate.control:
+                  id: living
+                  mode: "OFF"
+              - lambda: |-
+                  id(disp1).send_command_printf("click q0,1");
+                  id(disp1).send_command_printf("click q4,1");
+                  id(left_button_status)=0;
+                  id(disp1).set_component_text_printf("Home.t0", "TURN ACs ON");
+    on_release:
+      then:
+        lambda: 'id(disp1).send_command_printf("click tc0,1");'
+  
+# Right HW button to toggle between "home" and "away" status
+  - platform: gpio
+    name: $friendly_name Right Button
+    pin:
+      number: 27
+      inverted: true
+    on_press:
+      then:
+        - climate.control:
+            id: bed
+            preset: !lambda |-
+              if (id(bed).preset==CLIMATE_PRESET_AWAY)
+                {
+                  id(disp1).set_component_text_printf("Home.t1", "HOME");
+                  return CLIMATE_PRESET_HOME;
+                }  
+                else
+                {
+                  id(disp1).set_component_text_printf("Home.t1", "AWAY");
+                  return CLIMATE_PRESET_AWAY;
+                }
+        - climate.control:
+            id: living
+            preset: !lambda |-
+              if (id(living).preset==CLIMATE_PRESET_AWAY)
+                {
+                  return CLIMATE_PRESET_HOME;
+                }
+                else
+                {
+                  return CLIMATE_PRESET_AWAY;
+                }
+    on_release:
+      then:
+        lambda: 'id(disp1).send_command_printf("click tc0,1");'
+
+#############################################################
+########### RETRIEVE TARGET TEMP CHANGES ####################
+########### FROM NEXTION SCREEN          ####################
+#############################################################
+  - platform: nextion
+    name: $friendly_name Target Temp UP Living 
+    page_id: 0
+    component_id: 4
+    id: temp_up_living
+    on_press:
+      then:
+        - climate.control:
+            id: living
+            target_temperature: !lambda "return id(living).target_temperature + 5.0/9.0;" 
+
+  - platform: nextion
+    name: $friendly_name Target Temp DOWN Living
+    page_id: 0
+    component_id: 5 
+    id: temp_down_living
+    on_press:
+      then:
+        - climate.control:
+            id: living
+            target_temperature: !lambda "return id(living).target_temperature - 5.0/9.0;"
+
+  - platform: nextion
+    name: $friendly_name Target Temp UP Bed
+    page_id: 0
+    component_id: 14
+    id: temp_up_bed
+    on_press:
+      then:
+        - climate.control:
+            id: bed
+            target_temperature: !lambda "return id(bed).target_temperature + 5.0/9.0;"
+
+  - platform: nextion
+    name: $friendly_name Target Temp DOWN Bed
+    page_id: 0
+    component_id: 15
+    id: temp_down_bed
+    on_press:
+      then:
+        - climate.control:
+            id: bed
+            target_temperature: !lambda "return id(bed).target_temperature - 5.0/9.0;"
+
+#############################################################
+########### THERMOSTAT CONFIGURATION     ####################
+###########                              ####################
+#############################################################
+#climate:
+#  - platform: thermostat
+#    name: "Living Room AC"
+#    id: living
+#    sensor: temperature
+#    default_target_temperature_high: 22
+#    min_cooling_off_time: 300s
+#    min_cooling_run_time: 300s
+#    min_idle_time: 30s
+#    cool_action:
+#      - switch.turn_on: ac_low_fan_living
+#    idle_action:
+#      - switch.turn_on: ac_off_living
+#
+#  - platform: thermostat
+#    name: "Bedroom AC"
+#    id: bed
+#    sensor: temperature
+#    default_target_temperature_high: 22
+#    min_cooling_off_time: 300s
+#    min_cooling_run_time: 300s
+#    min_idle_time: 30s
+#    cool_action:
+#      - switch.turn_on: ac_low_fan_bed
+#    idle_action:
+#      - switch.turn_on: ac_off_bed
+
+climate:
+  - platform: thermostat
+    name: "Living Room AC"
+    id: living
+    sensor: tl_t
+    default_target_temperature_high: $target_temp_normal
+    min_cooling_off_time: 3s
+    min_cooling_run_time: 3s
+    max_cooling_run_time: 1h
+    min_fanning_off_time: 3s
+    min_fanning_run_time: 3s
+    min_idle_time: 3s
+    supplemental_cooling_delta: 5
+
+    idle_action:
+      - switch.turn_on: ac_off_living
+      - switch.turn_off: ac_low_fan_living
+      - switch.turn_off: ac_high_fan_living
+      - switch.turn_off: fan_low_living
+      - lambda: 'id(disp1).send_command_printf("statusl=1");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    cool_action:
+      - switch.turn_on: ac_low_fan_living
+      - switch.turn_off: ac_off_living
+      - switch.turn_off: ac_high_fan_living
+      - switch.turn_off: fan_low_living
+      - lambda: 'id(disp1).send_command_printf("statusl=2");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    supplemental_cooling_action:
+      - switch.turn_on: ac_high_fan_living
+      - switch.turn_off: ac_low_fan_living
+      - switch.turn_off: ac_off_living
+      - switch.turn_off: fan_low_living
+      - lambda: 'id(disp1).send_command_printf("statusl=3");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    fan_only_action:
+      - switch.turn_on: fan_low_living
+      - switch.turn_off: ac_low_fan_living
+      - switch.turn_off: ac_high_fan_living
+      - switch.turn_off: ac_off_living
+      - lambda: 'id(disp1).send_command_printf("statusl=4");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    on_state:
+      - lambda: 'id(disp1).send_command_printf("targettempl=%d",int(id(living).target_temperature *(9.0/5.0) + 32.0));'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    away_config:
+      default_target_temperature_high: $target_temp_away
+    default_mode: "off"
+    off_mode:
+      - lambda: 'id(disp1).send_command_printf("model=1");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    cool_mode:
+      - lambda: 'id(disp1).send_command_printf("model=2");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    fan_only_mode:
+      - lambda: 'id(disp1).send_command_printf("model=3");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+
+  - platform: thermostat
+    name: "Bedroom AC"
+    id: bed
+    sensor: tb_t
+    default_target_temperature_high: $target_temp_normal
+    min_cooling_off_time: 3s
+    min_cooling_run_time: 3s
+    max_cooling_run_time: 1h 
+    min_fanning_off_time: 3s
+    min_fanning_run_time: 3s
+    min_idle_time: 3s
+    supplemental_cooling_delta: 5
+
+    idle_action:
+      - switch.turn_on: ac_off_bed
+      - switch.turn_off: ac_low_fan_bed
+      - switch.turn_off: ac_high_fan_bed
+      - switch.turn_off: fan_low_bed
+      - lambda: 'id(disp1).send_command_printf("statusb=1");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    cool_action:
+      - switch.turn_on: ac_low_fan_bed
+      - switch.turn_off: ac_off_bed
+      - switch.turn_off: ac_high_fan_bed
+      - switch.turn_off: fan_low_bed
+      - lambda: 'id(disp1).send_command_printf("statusb=2");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    supplemental_cooling_action:
+      - switch.turn_on: ac_high_fan_bed
+      - switch.turn_off: ac_low_fan_bed
+      - switch.turn_off: ac_off_bed
+      - switch.turn_off: fan_low_bed
+      - lambda: 'id(disp1).send_command_printf("statusb=3");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    fan_only_action:
+      - switch.turn_on: fan_low_bed
+      - switch.turn_off: ac_low_fan_bed
+      - switch.turn_off: ac_high_fan_bed
+      - switch.turn_off: ac_off_bed
+      - lambda: 'id(disp1).send_command_printf("statusb=4");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    on_state:
+      - lambda: 'id(disp1).send_command_printf("targettempb=%d",int(id(bed).target_temperature *(9.0/5.0) + 32.0));'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    away_config:
+      default_target_temperature_high: $target_temp_away
+    default_mode: "off"
+    off_mode:
+      - lambda: 'id(disp1).send_command_printf("modeb=1");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    cool_mode:
+      - lambda: 'id(disp1).send_command_printf("modeb=2");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+    fan_only_mode:
+      - lambda: 'id(disp1).send_command_printf("modeb=3");'
+      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'

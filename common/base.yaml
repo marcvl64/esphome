@@ -12,7 +12,7 @@ ota:
 wifi:
   ssid: !secret WIFI_SSID
   password: !secret  WIFI_PASSWORD
-  # use_address: shelly_uni_.local
+  use_address: 192.168.50.72
 
   # Enable fallback hotspot (captive portal) in case WiFi connection fails
   ap:
@@ -25,3 +25,4 @@ mqtt:
   broker: !secret MQTT_HOST
   username: !secret MQTT_USER
   password: !secret MQTT_PASSWORD
+  id: mqtt_client

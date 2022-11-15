@@ -1,0 +1,49 @@
+# Basic config from: https://gist.github.com/tathamoddie/62afc41e5b4464f5adeef4b580fb3294
+
+substitutions:
+  node_platform: ESP32
+  node_board: m5stack-core-esp32
+
+packages:
+  device_base: !include ../common/base.yaml
+  basic_sensors: !include ../common/basic_sensors.yaml
+
+light:
+  - platform: fastled_clockless
+    chipset: WS2812B
+    pin: 27
+    rgb_order: GRB
+    num_leds: 1
+    id: status_led
+
+# Pressing the button will check the status of WiFi/MQTT connectivity
+# Momentary button
+binary_sensor:
+  - platform: gpio
+    id: button
+    pin:
+      number: 39
+      inverted: true
+    on_press:
+      then:
+        - light.turn_on: 
+            id: status_led
+            red: !lambda |-
+              // Show red when MQTT is not connected
+              if(id(mqtt_client)->is_connected()) {return 0;} else {return 1;};
+            green: !lambda |-
+              // Show green when MQTT is connected
+              if(id(mqtt_client)->is_connected()) {return 1;} else {return 0;};
+            blue: 0
+    on_release:
+      then:
+        - light.turn_off: status_led
+
+# Atom lite grove connector exposes pins 26 and 32. These need to be set as i2c pins
+# https://static-cdn.m5stack.com/resource/docs/static/assets/img/product_pics/core/minicore/atom/ATOM_LITE_SIMPLE_CIRCUT_20200514.webp
+# Grove to Stemma QT wire: Blue wire=SDA; Yellow wire=SLC (https://learn.adafruit.com/introducing-adafruit-stemma-qt/technical-specs)
+i2c:
+  id: bus_a
+  sda: 26
+  scl: 32
+  scan: true 

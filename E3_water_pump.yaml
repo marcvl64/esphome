@@ -1,0 +1,7 @@
+substitutions:
+  node_name: e3-water-pump
+  friendly_name: "E3 - Water Pump"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-plus-1.yaml

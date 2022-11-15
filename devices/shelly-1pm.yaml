@@ -9,10 +9,11 @@ packages:
   device_base: !include ../common/base.yaml
   basic_sensors: !include ../common/basic_sensors.yaml
 
-output:
+switch:
   - platform: gpio
     pin: GPIO15
     id: device_relay_1
+    name: "${friendly_name}"
     restore_mode: RESTORE_DEFAULT_OFF
 
 binary_sensor:
@@ -24,7 +25,7 @@ binary_sensor:
     name: "${switch_name}"
     on_press:
       then:
-        - output.toggle: device_relay_1
+        - switch.toggle: device_relay_1
     internal: true
     id: device_switch 
 
@@ -55,7 +56,7 @@ sensor:
       - lambda: if (x < 2) return 0; else return x;
     update_interval: 10s
 
- - platform: ntc
+  - platform: ntc
     sensor: temp_resistance_reading
     name: "${friendly_name} temperature"
     unit_of_measurement: "°C"
@@ -68,10 +69,10 @@ sensor:
     on_value_range:
       - above: ${max_temp}
         then:
-          - homeassistant.event:
-              event: esphome.overheat
-              data:
-                title: "${friendly_name} has overheated."
+          - switch.turn_off: device_relay_1
+          - mqtt.publish:
+              topic: ${node_name}/overheat
+              payload: "${friendly_name} has overheated."
   - platform: resistance
     id: temp_resistance_reading
     sensor: temp_analog_reading

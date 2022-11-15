@@ -1,0 +1,81 @@
+substitutions:
+  node_name: d5-8-4chan-living
+  friendly_name: 4 channel switch living
+  switch1: Relay 1
+  switch2: D5 Door Light
+  switch3: D6 Scare Light
+  switch4: D7 Floor Light
+
+packages:
+  device_base: !include devices/mic-4ch.yaml
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button1
+    on_press:
+      then:
+        - mqtt.publish:
+            topic: ${node_name}/switch/master_switch/state
+            payload: 1
+
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button2
+    on_press:
+      - light.toggle: light2
+
+  - platform: gpio
+    pin:
+      number: GPIO10
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button3
+    on_press:
+      - light.toggle: light3
+
+  - platform: gpio
+    pin:
+      number: GPIO14
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button4
+    on_press:
+      - light.toggle: light4
+   
+switch:
+  - platform: output
+    name: ${switch1}
+    id: switch1
+    output: relay1
+
+light:
+  - platform: binary
+    name: ${switch2}
+    id: light2
+    output: relay2
+
+  - platform: binary
+    name: ${switch3}
+    id: light3
+    output: relay3
+
+  - platform: binary
+    name: ${switch4}
+    id: light4
+    output: relay4
+

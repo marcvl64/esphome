@@ -7,13 +7,6 @@ packages:
   device_base: !include ../common/base.yaml
   basic_sensors: !include ../common/basic_sensors.yaml
 
-# All RGBW controllers support master on/off switch
-mqtt:
-  on_message:
-    - topic: "test-master-switch/switch/master_switch/state"
-      then:
-        - light.turn_off: device_light
-
 output:
   - platform: esp8266_pwm
     pin: GPIO12
@@ -34,30 +27,6 @@ output:
     pin: GPIO4
     frequency: 1000 Hz
     id: pwm_w
-
-light:
-  - platform: rgbw
-    name: ${light_name}
-    red: pwm_r
-    green: pwm_g
-    blue: pwm_b
-    white: pwm_w
-    effects:
-      - random:
-      - strobe:
-      - flicker:
-    id: device_light
-
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO5
-    name: ${switch_name}
-    on_state:
-      then:
-        - light.toggle: device_light
-    internal: true
-    id: device_switch
 
 sensor:
   - platform: adc
