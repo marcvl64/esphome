@@ -1,3 +1,4 @@
+# Nextion controller
 substitutions:
   node_name: g6-thermostat 
   friendly_name: Thermostat 
