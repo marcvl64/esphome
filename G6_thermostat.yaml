@@ -19,6 +19,12 @@ globals:
   - id: bg
     type: int
     initial_value: "1" # Screen background set to grey
+  - id: ac_control_bed
+    type: int
+    initial_value: "0" # 0=OFF, 1=LOW FAN, 2=HIGH FAN, 3=AC COOL LOW, 4=AC COOL HIGH
+  - id: ac_control_living
+    type: int
+    initial_value: "0" # 0=OFF, 1=LOW FAN, 2=HIGH FAN, 3=AC COOL LOW, 4=AC COOL HIGH
 
 #############################################################
 ########### SUBSCRIBE TO MQTT TOPICS     ####################
@@ -94,90 +100,27 @@ display:
 ########### CONFIGURE AC OUTPUT      ########################
 ########### BEDROOM AC (GPIO 22)     ########################
 #############################################################
-switch:
-  - platform: custom
-    lambda: |-
-      auto AC_Turn_on_high_fan_bed= new AC_Turn_on_high_fan(22);
-      App.register_component(AC_Turn_on_high_fan_bed);
-      return {AC_Turn_on_high_fan_bed};
+custom_component:
+  - lambda: |-
+      auto ac_action_bed = new AC_Control(22,id(ac_control_bed));
+      App.register_component(ac_action_bed);
+      return {ac_action_bed};
 
-    switches:
-      name: "AC high fan bed"
-      id: ac_high_fan_bed
-
-  - platform: custom
-    lambda: |-
-      auto AC_Turn_on_low_fan_bed= new AC_Turn_on_low_fan(22);
-      App.register_component(AC_Turn_on_low_fan_bed);
-      return {AC_Turn_on_low_fan_bed};
-
-    switches:
-      name: "AC low fan bed"
-      id: ac_low_fan_bed
-
-  - platform: custom
-    lambda: |-
-      auto fan_low_bed= new Fan_Low(22);
-      App.register_component(fan_low_bed);
-      return {fan_low_bed};
-
-    switches:
-      name: "fan low bed"
-      id: fan_low_bed
-
-  - platform: custom
-    lambda: |-
-      auto ac_off_bed= new AC_Off(22);
-      App.register_component(ac_off_bed);
-      return {ac_off_bed};
-
-    switches:
-      name: "ac off bed"
-      id: ac_off_bed
+    components:
+    - id: ac_action_bed_id
 
 #############################################################
 ########### CONFIGURE AC OUTPUT      ########################
 ########### LIVING ROOM AC (GPIO 19) ########################
 #############################################################
-  - platform: custom
-    lambda: |-
-      auto AC_Turn_on_high_fan_living= new AC_Turn_on_high_fan(19);
-      App.register_component(AC_Turn_on_high_fan_living);
-      return {AC_Turn_on_high_fan_living};
+  - lambda: |-
+      auto ac_action_living = new AC_Control(19,id(ac_control_living));
+      App.register_component(ac_action_living);
+      return {ac_action_living};
 
-    switches:
-      name: "AC high fan living"
-      id: ac_high_fan_living
+    components:
+    - id: ac_action_living_id
 
-  - platform: custom
-    lambda: |-
-      auto AC_Turn_on_low_fan_living= new AC_Turn_on_low_fan(19);
-      App.register_component(AC_Turn_on_low_fan_living);
-      return {AC_Turn_on_low_fan_living};
-
-    switches:
-      name: "AC low fan living"
-      id: ac_low_fan_living
-
-  - platform: custom
-    lambda: |-
-      auto fan_low_living= new Fan_Low(19);
-      App.register_component(fan_low_living);
-      return {fan_low_living};
-
-    switches:
-      name: "fan low living"
-      id: fan_low_living
-
-  - platform: custom
-    lambda: |-
-      auto ac_off_living= new AC_Off(19);
-      App.register_component(ac_off_living);
-      return {ac_off_living};
-
-    switches:
-      name: "ac off living"
-      id: ac_off_living
 
 sensor:
 #############################################################
@@ -494,31 +437,19 @@ climate:
     supplemental_cooling_delta: 5
 
     idle_action:
-      - switch.turn_on: ac_off_living
-      - switch.turn_off: ac_low_fan_living
-      - switch.turn_off: ac_high_fan_living
-      - switch.turn_off: fan_low_living
+      - lambda: 'id(ac_control_living) = 0;'
       - lambda: 'id(disp1).send_command_printf("statusl=1");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     cool_action:
-      - switch.turn_on: ac_low_fan_living
-      - switch.turn_off: ac_off_living
-      - switch.turn_off: ac_high_fan_living
-      - switch.turn_off: fan_low_living
+      - lambda: 'id(ac_control_living) = 3;'
       - lambda: 'id(disp1).send_command_printf("statusl=2");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     supplemental_cooling_action:
-      - switch.turn_on: ac_high_fan_living
-      - switch.turn_off: ac_low_fan_living
-      - switch.turn_off: ac_off_living
-      - switch.turn_off: fan_low_living
+      - lambda: 'id(ac_control_living) = 4;'
       - lambda: 'id(disp1).send_command_printf("statusl=3");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     fan_only_action:
-      - switch.turn_on: fan_low_living
-      - switch.turn_off: ac_low_fan_living
-      - switch.turn_off: ac_high_fan_living
-      - switch.turn_off: ac_off_living
+      - lambda: 'id(ac_control_living) = 1;'
       - lambda: 'id(disp1).send_command_printf("statusl=4");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     on_state:
@@ -551,31 +482,19 @@ climate:
     supplemental_cooling_delta: 5
 
     idle_action:
-      - switch.turn_on: ac_off_bed
-      - switch.turn_off: ac_low_fan_bed
-      - switch.turn_off: ac_high_fan_bed
-      - switch.turn_off: fan_low_bed
+      - lambda: 'id(ac_control_bed) = 0;'
       - lambda: 'id(disp1).send_command_printf("statusb=1");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     cool_action:
-      - switch.turn_on: ac_low_fan_bed
-      - switch.turn_off: ac_off_bed
-      - switch.turn_off: ac_high_fan_bed
-      - switch.turn_off: fan_low_bed
+      - lambda: 'id(ac_control_bed) = 3;'
       - lambda: 'id(disp1).send_command_printf("statusb=2");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     supplemental_cooling_action:
-      - switch.turn_on: ac_high_fan_bed
-      - switch.turn_off: ac_low_fan_bed
-      - switch.turn_off: ac_off_bed
-      - switch.turn_off: fan_low_bed
+      - lambda: 'id(ac_control_bed) = 4;'
       - lambda: 'id(disp1).send_command_printf("statusb=3");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     fan_only_action:
-      - switch.turn_on: fan_low_bed
-      - switch.turn_off: ac_low_fan_bed
-      - switch.turn_off: ac_high_fan_bed
-      - switch.turn_off: ac_off_bed
+      - lambda: 'id(ac_control_bed) = 1;'
       - lambda: 'id(disp1).send_command_printf("statusb=4");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     on_state:
