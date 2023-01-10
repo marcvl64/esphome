@@ -283,81 +283,108 @@ binary_sensor:
 ########### DEFINE HARDWARE BUTTONS      ####################
 ########### PAGE DEPENDENT FUNCTIONALITY ####################
 #############################################################
-  # Left HW button to toggle both ACs between COOL and OFF mode
+
+# Buttons allow to rotate across all screens (forward or backward)
+# Left button - go back to previous page
+
   - platform: gpio
     name: $friendly_name Left Button
     pin:
       number: 14
       inverted: true
     on_press:
-      then:
-        - if: 
-            condition:
-              lambda: 'return id(left_button_status)==0;'
-            then:
-              - climate.control:
-                  id: bed
-                  mode: COOL
-              - climate.control:
-                  id: living
-                  mode: COOL
-              - lambda: |-
-                  id(disp1).send_command_printf("click q1,1");
-                  id(disp1).send_command_printf("click q5,1");
-                  id(left_button_status)=1;
-                  id(disp1).set_component_text_printf("Home.t0", "TURN ACs OFF");
-            else:
-              - climate.control:
-                  id: bed
-                  mode: "OFF"
-              - climate.control:
-                  id: living
-                  mode: "OFF"
-              - lambda: |-
-                  id(disp1).send_command_printf("click q0,1");
-                  id(disp1).send_command_printf("click q4,1");
-                  id(left_button_status)=0;
-                  id(disp1).set_component_text_printf("Home.t0", "TURN ACs ON");
-    on_release:
-      then:
-        lambda: 'id(disp1).send_command_printf("click tc0,1");'
-  
-# Right HW button to toggle between "home" and "away" status
-  - platform: gpio
-    name: $friendly_name Right Button
-    pin:
-      number: 27
-      inverted: true
-    on_press:
-      then:
-        - climate.control:
-            id: bed
-            preset: !lambda |-
-              if (id(bed).preset==CLIMATE_PRESET_AWAY)
-                {
-                  id(disp1).set_component_text_printf("Home.t1", "HOME");
-                  return CLIMATE_PRESET_HOME;
-                }  
-                else
-                {
-                  id(disp1).set_component_text_printf("Home.t1", "AWAY");
-                  return CLIMATE_PRESET_AWAY;
-                }
-        - climate.control:
-            id: living
-            preset: !lambda |-
-              if (id(living).preset==CLIMATE_PRESET_AWAY)
-                {
-                  return CLIMATE_PRESET_HOME;
-                }
-                else
-                {
-                  return CLIMATE_PRESET_AWAY;
-                }
-    on_release:
-      then:
-        lambda: 'id(disp1).send_command_printf("click tc0,1");'
+      then: !lambda |-
+        if (id(active_page).state==0)
+          {
+            id(disp1).goto_page("Victron");
+            id(disp1).send_command_printf("click m0,1");
+          }
+        else if(id(active_page).state==1)
+          {
+            id(disp1).goto_page("Home");
+            id(disp1).send_command_printf("click m0,1");
+          } 
+        else
+          {
+            id(disp1).goto_page("Home");
+            id(disp1).send_command_printf("click m0,1");
+          }; 
 
+#  # Left HW button to toggle both ACs between COOL and OFF mode
+#  - platform: gpio
+#    name: $friendly_name Left Button
+#    pin:
+#      number: 14
+#      inverted: true
+#    on_press:
+#      then:
+#        - if: 
+#            condition:
+#              lambda: 'return id(left_button_status)==0;'
+#            then:
+#              - climate.control:
+#                  id: bed
+#                  mode: COOL
+#              - climate.control:
+#                  id: living
+#                  mode: COOL
+#              - lambda: |-
+#                  id(disp1).send_command_printf("click q1,1");
+#                  id(disp1).send_command_printf("click q5,1");
+#                  id(left_button_status)=1;
+#                  id(disp1).set_component_text_printf("Home.t0", "TURN ACs OFF");
+#            else:
+#              - climate.control:
+#                  id: bed
+#                  mode: "OFF"
+#              - climate.control:
+#                  id: living
+#                  mode: "OFF"
+#              - lambda: |-
+#                  id(disp1).send_command_printf("click q0,1");
+#                  id(disp1).send_command_printf("click q4,1");
+#                  id(left_button_status)=0;
+#                  id(disp1).set_component_text_printf("Home.t0", "TURN ACs ON");
+#    on_release:
+#      then:
+#        lambda: 'id(disp1).send_command_printf("click tc0,1");'
+#  
+## Right HW button to toggle between "home" and "away" status
+#  - platform: gpio
+#    name: $friendly_name Right Button
+#    pin:
+#      number: 27
+#      inverted: true
+#    on_press:
+#      then:
+#        - climate.control:
+#            id: bed
+#            preset: !lambda |-
+#              if (id(bed).preset==CLIMATE_PRESET_AWAY)
+#                {
+#                  id(disp1).set_component_text_printf("Home.t1", "HOME");
+#                  return CLIMATE_PRESET_HOME;
+#                }  
+#                else
+#                {
+#                  id(disp1).set_component_text_printf("Home.t1", "AWAY");
+#                  return CLIMATE_PRESET_AWAY;
+#                }
+#        - climate.control:
+#            id: living
+#            preset: !lambda |-
+#              if (id(living).preset==CLIMATE_PRESET_AWAY)
+#                {
+#                  return CLIMATE_PRESET_HOME;
+#                }
+#                else
+#                {
+#                  return CLIMATE_PRESET_AWAY;
+#                }
+#    on_release:
+#      then:
+#        lambda: 'id(disp1).send_command_printf("click tc0,1");'
+#
 #############################################################
 ########### RETRIEVE TARGET TEMP CHANGES ####################
 ########### FROM NEXTION SCREEN          ####################
