@@ -1,0 +1,44 @@
+substitutions:
+  node_name: d9-10-sw-switch
+  friendly_name: 2 channel switch living
+  switch1: DayNight
+  switch2: Beastie1
+
+packages:
+  device_base: !include devices/shelly-uni.yaml
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO12
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button1
+    on_press:
+      - switch.toggle: switch1
+    internal: true
+
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button2
+    on_press:
+      - switch.toggle: switch2
+    internal: true
+
+switch:
+  - platform: template
+    name: Day/Night Switch
+    id: switch1
+    optimistic: true
+
+  - platform: template
+    name: Beastie1 Switch
+    id: switch2
+    optimistic: true

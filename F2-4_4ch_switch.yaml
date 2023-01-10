@@ -1,0 +1,58 @@
+substitutions:
+  node_name: f2-4-4chan-living
+  friendly_name: 4 channel switch bedroom
+  switch2: F3 All Off Switch
+  switch3: F4 Beastie2 Switch
+
+packages:
+  device_base: !include devices/mic-4ch.yaml
+
+binary_sensor:
+# this implements a 3-way software switch by instructing
+# the remote device to toggle the floor lights
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button1
+    on_press:
+      then:
+        - mqtt.publish:
+            topic: d5-8-4chan-living/light/d7_floor_light/remote
+            payload: "TOGGLE"
+ 
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button2
+    on_press:
+      - switch.toggle: switch2
+
+  - platform: gpio
+    pin:
+      number: GPIO10
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button3
+    on_press:
+      - switch.toggle: switch3
+
+switch:
+  - platform: template
+    name: ${switch2}
+    id: switch2
+    optimistic: true
+
+  - platform: template
+    name: ${switch3}
+    id: switch3
+    optimistic: true

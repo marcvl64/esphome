@@ -1,0 +1,40 @@
+substitutions:
+  node_name: e3-4-sw-switch
+  friendly_name: 2 channel switch bathroom
+  switch1: Beastie3
+
+packages:
+  device_base: !include devices/shelly-uni.yaml
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO12
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button1
+    on_press:
+      then:
+        - mqtt.publish:
+            topic: g3-waterpump/switch/g3_waterpump/remote
+            payload: "TOGGLE"
+
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button2
+    on_press:
+      - switch.toggle: switch1
+    internal: true
+
+switch:
+  - platform: template
+    name: Beastie3 Switch
+    id: switch1
+    optimistic: true

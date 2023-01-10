@@ -27,8 +27,8 @@ sensor:
               int minutes = seconds /  60;
               seconds = seconds % 60;
               return (
-                (days ? String(days) + "d " : "") +
-                (hours ? String(hours) + "h " : "")
+                (days ? to_string(days) + "d " : "") +
+                (hours ? to_string(hours) + "h " : "")
               ).c_str();
 
 text_sensor:

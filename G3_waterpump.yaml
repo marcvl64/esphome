@@ -1,0 +1,13 @@
+substitutions:
+  node_name: g3-waterpump
+  friendly_name: "G3 - Waterpump"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-plus-1.yaml
+
+mqtt:
+  on_message:
+    - topic: g3-waterpump/switch/g3_waterpump/remote
+      then:
+        - switch.toggle: relay 

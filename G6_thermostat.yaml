@@ -2,8 +2,8 @@
 substitutions:
   node_name: g6-thermostat 
   friendly_name: Thermostat 
-  target_temp_normal: 70 F
-  target_temp_away: 75 F
+  target_temp_normal: "70 F"
+  target_temp_away: "75 F"
   tft_url: http://192.168.50.37:8123/local/nspanel_beastie.tft
 
 packages:
@@ -20,12 +20,6 @@ globals:
   - id: bg
     type: int
     initial_value: "1" # Screen background set to grey
-  - id: ac_control_bed
-    type: int
-    initial_value: "0" # 0=OFF, 1=LOW FAN, 2=HIGH FAN, 3=AC COOL LOW, 4=AC COOL HIGH
-  - id: ac_control_living
-    type: int
-    initial_value: "0" # 0=OFF, 1=LOW FAN, 2=HIGH FAN, 3=AC COOL LOW, 4=AC COOL HIGH
 
 #############################################################
 ########### SUBSCRIBE TO MQTT TOPICS     ####################
@@ -96,6 +90,26 @@ display:
 #
 #            );
         - rtttl.play: "twobits:d=4,o=5,b=220:c6,8g,8g,a,g,p,b,c6"
+
+#################################################################################
+########### DEFINE AC ACTIONS 0:OFF, 1:LOW_FAN, 2: HIGH_FAN, 3: AC_LOW, 4:AC_HIGH
+#################################################################################
+number:
+  - platform: template
+    id: ac_control_bed
+    min_value: 0
+    max_value: 4
+    step: 1
+    internal: true
+    optimistic: true
+
+  - platform: template
+    id: ac_control_living
+    min_value: 0
+    max_value: 4
+    step: 1
+    internal: true
+    optimistic: true
 
 #############################################################
 ########### CONFIGURE AC OUTPUT      ########################
@@ -428,7 +442,6 @@ climate:
     name: "Living Room AC"
     id: living
     sensor: tl_t
-    default_target_temperature_high: $target_temp_normal
     min_cooling_off_time: 3s
     min_cooling_run_time: 3s
     max_cooling_run_time: 1h
@@ -436,29 +449,42 @@ climate:
     min_fanning_run_time: 3s
     min_idle_time: 3s
     supplemental_cooling_delta: 5
-
+    preset:
+      - name: home
+        default_target_temperature_high: $target_temp_normal
+      - name: away
+        default_target_temperature_high: $target_temp_away
     idle_action:
-      - lambda: 'id(ac_control_living) = 0;'
-      - lambda: 'id(disp1).send_command_printf("statusl=1");'
-      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+      - lambda: |-
+         auto call = id(ac_control_living).make_call();
+         call.set_value(0);
+         call.perform();
+         id(disp1).send_command_printf("statusl=1");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     cool_action:
-      - lambda: 'id(ac_control_living) = 3;'
-      - lambda: 'id(disp1).send_command_printf("statusl=2");'
-      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+      - lambda: |-
+         auto call = id(ac_control_living).make_call();
+         call.set_value(3);
+         call.perform();
+         id(disp1).send_command_printf("statusl=2");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     supplemental_cooling_action:
-      - lambda: 'id(ac_control_living) = 4;'
-      - lambda: 'id(disp1).send_command_printf("statusl=3");'
-      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+      - lambda: |-
+         auto call = id(ac_control_living).make_call();
+         call.set_value(4);
+         call.perform();
+         id(disp1).send_command_printf("statusl=3");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     fan_only_action:
-      - lambda: 'id(ac_control_living) = 1;'
-      - lambda: 'id(disp1).send_command_printf("statusl=4");'
-      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+      - lambda: |-
+         auto call = id(ac_control_living).make_call();
+         call.set_value(1);
+         call.perform();
+         id(disp1).send_command_printf("statusl=4");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     on_state:
       - lambda: 'id(disp1).send_command_printf("targettempl=%d",int(id(living).target_temperature *(9.0/5.0) + 32.0));'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
-    away_config:
-      default_target_temperature_high: $target_temp_away
-    default_mode: "off"
     off_mode:
       - lambda: 'id(disp1).send_command_printf("model=1");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
@@ -473,7 +499,6 @@ climate:
     name: "Bedroom AC"
     id: bed
     sensor: tb_t
-    default_target_temperature_high: $target_temp_normal
     min_cooling_off_time: 3s
     min_cooling_run_time: 3s
     max_cooling_run_time: 1h 
@@ -481,29 +506,42 @@ climate:
     min_fanning_run_time: 3s
     min_idle_time: 3s
     supplemental_cooling_delta: 5
-
+    preset:
+      - name: home
+        default_target_temperature_high: $target_temp_normal
+      - name: away
+        default_target_temperature_high: $target_temp_away
     idle_action:
-      - lambda: 'id(ac_control_bed) = 0;'
-      - lambda: 'id(disp1).send_command_printf("statusb=1");'
-      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+      - lambda: |-
+         auto call = id(ac_control_bed).make_call();
+         call.set_value(0);
+         call.perform();
+         id(disp1).send_command_printf("statusb=1");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     cool_action:
-      - lambda: 'id(ac_control_bed) = 3;'
-      - lambda: 'id(disp1).send_command_printf("statusb=2");'
-      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+      - lambda: |-
+         auto call = id(ac_control_bed).make_call();
+         call.set_value(3);
+         call.perform();
+         id(disp1).send_command_printf("statusb=2");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     supplemental_cooling_action:
-      - lambda: 'id(ac_control_bed) = 4;'
-      - lambda: 'id(disp1).send_command_printf("statusb=3");'
-      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+      - lambda: |-
+         auto call = id(ac_control_bed).make_call();
+         call.set_value(4);
+         call.perform();
+         id(disp1).send_command_printf("statusb=3");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     fan_only_action:
-      - lambda: 'id(ac_control_bed) = 1;'
-      - lambda: 'id(disp1).send_command_printf("statusb=4");'
-      - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
+      - lambda: |-
+         auto call = id(ac_control_bed).make_call();
+         call.set_value(1);
+         call.perform();
+         id(disp1).send_command_printf("statusb=4");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     on_state:
       - lambda: 'id(disp1).send_command_printf("targettempb=%d",int(id(bed).target_temperature *(9.0/5.0) + 32.0));'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
-    away_config:
-      default_target_temperature_high: $target_temp_away
-    default_mode: "off"
     off_mode:
       - lambda: 'id(disp1).send_command_printf("modeb=1");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'

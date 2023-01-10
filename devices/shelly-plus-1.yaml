@@ -6,26 +6,26 @@ substitutions:
   max_temp: "70.0"
 
 packages:
-  device_base: !include ../common/base.yaml
+#  device_base: !include ../common/base.yaml
   basic_sensors: !include ../common/basic_sensors.yaml
 
-#esphome:
-#  name: ${node_name}
-#  platformio_options:
-#    board_build.f_cpu: 160000000L
+esphome:
+  name: ${node_name}
+  platformio_options:
+    board_build.f_cpu: 160000000L
 
-#esp32:
-#  board: ${node_board}
-#  framework:
-#    type: esp-idf
-#    sdkconfig_options:
-#      CONFIG_FREERTOS_UNICORE: y
-#      CONFIG_ESP32_DEFAULT_CPU_FREQ_160: y
-#      CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ: "160"
-
-logger:
+esp32:
+  board: ${node_board}
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_FREERTOS_UNICORE: y
+      CONFIG_ESP32_DEFAULT_CPU_FREQ_160: y
+      CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ: "160"
 
 ota:
+
+logger:
 
 wifi:
   ssid: !secret WIFI_SSID
@@ -33,11 +33,12 @@ wifi:
 #  use_address: 4-chan-living.local
 
   # Enable fallback hotspot (captive portal) in case WiFi connection fails
-  ap:
-    ssid: ${friendly_name} 
-    password: !secret AP_PASSWORD
+#ap:
+#    ssid: ${friendly_name} 
+#    password: !secret AP_PASSWORD
 
-captive_portal:
+# captive portal not supported with esp-idf framework
+# captive_portal:
 
 mqtt:
   broker: !secret MQTT_HOST
