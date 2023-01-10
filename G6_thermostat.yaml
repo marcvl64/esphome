@@ -293,23 +293,24 @@ binary_sensor:
       number: 14
       inverted: true
     on_press:
-      then: !lambda |-
-        if (id(active_page).state==0)
-          {
-            id(disp1).goto_page("Victron");
-            id(disp1).send_command_printf("click m0,1");
-          }
-        else if(id(active_page).state==1)
-          {
-            id(disp1).goto_page("Home");
-            id(disp1).send_command_printf("click m0,1");
-          } 
-        else
-          {
-            id(disp1).goto_page("Home");
-            id(disp1).send_command_printf("click m0,1");
-          }; 
-
+      then: 
+        - lambda: |-
+            if (id(active_page).state==0)
+              {
+                id(disp1).goto_page("Victron");
+                id(disp1).send_command_printf("click m0,1");
+              }
+            else if(id(active_page).state==1)
+              {
+                id(disp1).goto_page("Home");
+                id(disp1).send_command_printf("click m0,1");
+              } 
+            else
+              {
+                id(disp1).goto_page("Home");
+                id(disp1).send_command_printf("click m0,1");
+              }; 
+    
 #  # Left HW button to toggle both ACs between COOL and OFF mode
 #  - platform: gpio
 #    name: $friendly_name Left Button
