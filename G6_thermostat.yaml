@@ -14,9 +14,6 @@ esphome:
     - devices/sonoff-nsp.h
 
 globals:
-  - id: left_button_status
-    type: int
-    initial_value: "0"
   - id: bg
     type: int
     initial_value: "1" # Screen background set to grey
@@ -59,6 +56,22 @@ mqtt:
       then:
         - lambda: 'id(disp1).send_command_printf("invmode=%d",int(x["value"]));' 
 
+    - topic: venus-home/N/d41243b5183f/greytank
+      then:
+        - lambda: 'id(disp1).send_command_printf("grey=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/blacktank
+      then:
+        - lambda: 'id(disp1).send_command_printf("black=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/freshtank
+      then:
+        - lambda: 'id(disp1).send_command_printf("fresh=%d",int(x["value"]));' 
+
+    - topic: venus-home/N/d41243b5183f/propanetank
+      then:
+        - lambda: 'id(disp1).send_command_printf("propane=%d",int(x["value"]));' 
+
 
 #############################################################
 ########### CONFIGURE NEXTION SCREEN ########################
@@ -69,13 +82,9 @@ display:
     id: disp1
     uart_id: tf_uart
     tft_url: $tft_url
-    # A little fun...
     on_setup:
       then:
-        - lambda: |-
-            id(disp1).set_component_text_printf(
-              "t0","%s", "TURN ACs ON"
-            );
+#        - lambda: |-
 #            id(disp1).set_component_text_printf(
 #              "tl", "%.1f ""\xb0""F", id(tl).state * (9.0/5.0) +32.0
 #            );
@@ -113,7 +122,7 @@ number:
 
 #############################################################
 ########### CONFIGURE AC OUTPUT      ########################
-########### BEDROOM AC (GPIO 22)     ########################
+########### BEDROOM: GPIO 22, LIVING: GPIO 19     ###########
 #############################################################
 custom_component:
   - lambda: |-
@@ -124,10 +133,6 @@ custom_component:
     components:
     - id: ac_action_bed_id
 
-#############################################################
-########### CONFIGURE AC OUTPUT      ########################
-########### LIVING ROOM AC (GPIO 19) ########################
-#############################################################
   - lambda: |-
       auto ac_action_living = new AC_Control(19,id(ac_control_living));
       App.register_component(ac_action_living);
@@ -139,9 +144,9 @@ custom_component:
 
 sensor:
 #############################################################
-########### RETRIEVE ACTIVE PAGE         ####################
-########### UPDATE ALL COMPONENTS        ####################
-########### 0:HOME, 1: VICTRON, 2: SLEEP ####################
+########### RETRIEVE NEXTION ACTIVE PAGE    #################
+########### UPDATE ALL COMPONENTS ON CHANGE  ################
+# 0:HOME, 1: VICTRON, 2: TANK, 3: TPMS, 4: SLEEP, 5: BOOTUP SCREEN ##
 #############################################################
   - platform: nextion
     variable_name: dp
@@ -297,10 +302,54 @@ binary_sensor:
         - lambda: |-
             if (id(active_page).state==0)
               {
+                id(disp1).goto_page("TPMS");
+                id(disp1).send_command_printf("click m0,1");
+              }
+            else if(id(active_page).state==1)
+              {
+                id(disp1).goto_page("Home");
+                id(disp1).send_command_printf("click m0,1");
+              } 
+            else if(id(active_page).state==2)
+              {
+                id(disp1).goto_page("Victron");
+                id(disp1).send_command_printf("click m0,1");
+              } 
+            else if(id(active_page).state==3)
+              {
+                id(disp1).goto_page("Tank");
+                id(disp1).send_command_printf("click m0,1");
+              } 
+            else
+              {
+                id(disp1).goto_page("Home");
+                id(disp1).send_command_printf("click m0,1");
+              }; 
+    
+  - platform: gpio
+    name: $friendly_name Right Button
+    pin:
+      number: 27
+      inverted: true
+    on_press:
+      then: 
+        - lambda: |-
+            if (id(active_page).state==0)
+              {
                 id(disp1).goto_page("Victron");
                 id(disp1).send_command_printf("click m0,1");
               }
             else if(id(active_page).state==1)
+              {
+                id(disp1).goto_page("Tank");
+                id(disp1).send_command_printf("click m0,1");
+              } 
+            else if(id(active_page).state==2)
+              {
+                id(disp1).goto_page("TPMS");
+                id(disp1).send_command_printf("click m0,1");
+              } 
+            else if(id(active_page).state==3)
               {
                 id(disp1).goto_page("Home");
                 id(disp1).send_command_printf("click m0,1");
@@ -310,82 +359,7 @@ binary_sensor:
                 id(disp1).goto_page("Home");
                 id(disp1).send_command_printf("click m0,1");
               }; 
-    
-#  # Left HW button to toggle both ACs between COOL and OFF mode
-#  - platform: gpio
-#    name: $friendly_name Left Button
-#    pin:
-#      number: 14
-#      inverted: true
-#    on_press:
-#      then:
-#        - if: 
-#            condition:
-#              lambda: 'return id(left_button_status)==0;'
-#            then:
-#              - climate.control:
-#                  id: bed
-#                  mode: COOL
-#              - climate.control:
-#                  id: living
-#                  mode: COOL
-#              - lambda: |-
-#                  id(disp1).send_command_printf("click q1,1");
-#                  id(disp1).send_command_printf("click q5,1");
-#                  id(left_button_status)=1;
-#                  id(disp1).set_component_text_printf("Home.t0", "TURN ACs OFF");
-#            else:
-#              - climate.control:
-#                  id: bed
-#                  mode: "OFF"
-#              - climate.control:
-#                  id: living
-#                  mode: "OFF"
-#              - lambda: |-
-#                  id(disp1).send_command_printf("click q0,1");
-#                  id(disp1).send_command_printf("click q4,1");
-#                  id(left_button_status)=0;
-#                  id(disp1).set_component_text_printf("Home.t0", "TURN ACs ON");
-#    on_release:
-#      then:
-#        lambda: 'id(disp1).send_command_printf("click tc0,1");'
-#  
-## Right HW button to toggle between "home" and "away" status
-#  - platform: gpio
-#    name: $friendly_name Right Button
-#    pin:
-#      number: 27
-#      inverted: true
-#    on_press:
-#      then:
-#        - climate.control:
-#            id: bed
-#            preset: !lambda |-
-#              if (id(bed).preset==CLIMATE_PRESET_AWAY)
-#                {
-#                  id(disp1).set_component_text_printf("Home.t1", "HOME");
-#                  return CLIMATE_PRESET_HOME;
-#                }  
-#                else
-#                {
-#                  id(disp1).set_component_text_printf("Home.t1", "AWAY");
-#                  return CLIMATE_PRESET_AWAY;
-#                }
-#        - climate.control:
-#            id: living
-#            preset: !lambda |-
-#              if (id(living).preset==CLIMATE_PRESET_AWAY)
-#                {
-#                  return CLIMATE_PRESET_HOME;
-#                }
-#                else
-#                {
-#                  return CLIMATE_PRESET_AWAY;
-#                }
-#    on_release:
-#      then:
-#        lambda: 'id(disp1).send_command_printf("click tc0,1");'
-#
+ 
 #############################################################
 ########### RETRIEVE TARGET TEMP CHANGES ####################
 ########### FROM NEXTION SCREEN          ####################
@@ -438,32 +412,6 @@ binary_sensor:
 ########### THERMOSTAT CONFIGURATION     ####################
 ###########                              ####################
 #############################################################
-#climate:
-#  - platform: thermostat
-#    name: "Living Room AC"
-#    id: living
-#    sensor: temperature
-#    default_target_temperature_high: 22
-#    min_cooling_off_time: 300s
-#    min_cooling_run_time: 300s
-#    min_idle_time: 30s
-#    cool_action:
-#      - switch.turn_on: ac_low_fan_living
-#    idle_action:
-#      - switch.turn_on: ac_off_living
-#
-#  - platform: thermostat
-#    name: "Bedroom AC"
-#    id: bed
-#    sensor: temperature
-#    default_target_temperature_high: 22
-#    min_cooling_off_time: 300s
-#    min_cooling_run_time: 300s
-#    min_idle_time: 30s
-#    cool_action:
-#      - switch.turn_on: ac_low_fan_bed
-#    idle_action:
-#      - switch.turn_on: ac_off_bed
 
 climate:
   - platform: thermostat

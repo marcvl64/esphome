@@ -17,23 +17,23 @@ class AC_Control : public Component {
     void loop() override {
       if (AC_command==0) {
         AC_off();
-        ESP_LOGD("custom", "Turn off AC. Command = %d, PIN = %d", AC_command, AC_signal_genPIN);
+//        ESP_LOGD("custom", "Turn off AC. Command = %d, PIN = %d", AC_command, AC_signal_genPIN);
       }
       if (AC_command==1) {
         AC_fan_low();
-        ESP_LOGD("custom", "Turn on low fan");
+//        ESP_LOGD("custom", "Turn on low fan");
       }
       if (AC_command==2) {
         AC_fan_high();
-        ESP_LOGD("custom", "Turn on high fan");
+//        ESP_LOGD("custom", "Turn on high fan");
       }
       if (AC_command==3) {
         AC_cool_low();
-        ESP_LOGD("custom", "Turn on AC, low fan speed");
+//        ESP_LOGD("custom", "Turn on AC, low fan speed");
       }
       if (AC_command==4) {
         AC_cool_high();
-        ESP_LOGD("custom", "Turn on AC, high fan speed");
+//        ESP_LOGD("custom", "Turn on AC, high fan speed");
       }
     }
 
