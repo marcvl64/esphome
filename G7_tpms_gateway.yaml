@@ -1,0 +1,239 @@
+substitutions:
+  node_name: g7-tpms-gateway 
+  friendly_name: TPMS Gateway 
+
+packages:
+  device_base: !include devices/atom-lite.yaml
+
+esphome:
+  includes:
+    - devices/tpms.h
+
+# https://docs.m5stack.com/en/atom/atomic232
+uart:
+  tx_pin: 19
+  rx_pin: 22
+  baud_rate: 9600
+  id: uart_bus
+  debug:
+    direction: BOTH
+    dummy_receiver: true
+    after:
+      delimiter: "0x03"
+
+text_sensor:
+- platform: custom
+  lambda: |-
+    auto my_custom_sensor = new UartReadLineSensor(id(uart_bus));
+    App.register_component(my_custom_sensor);
+    return {my_custom_sensor};
+  text_sensors:
+    id: "uart_readline"
+    on_value:
+      then:
+        - lambda: |-
+            auto parse_string = [](const std::string &payload) {
+              // split in components
+
+              // Front left sensor
+              std::string fl_pos = payload.substr(6,1);
+              std::string fl_psi = payload.substr(10,1);
+              std::string fl_timeout = payload.substr(11,1);
+              std::string fl_temp = payload.substr(12,1);
+              std::string fl_rfQuality = payload.substr(13,1);
+              std::string fl_alarm = payload.substr(14,1);
+              std::string fl_ref= payload.substr(15,1);
+
+                    // create json object
+              DynamicJsonDocument fl(1024);
+              fl["position"] = fl_pos;
+              fl["psi"] = fl_psi;
+              fl["timeout"] = fl_timeout;
+              fl["temperature"] = fl_temp;
+              fl["rfQuality"] = fl_rfQuality;
+              fl["alarm"] = fl_alarm;
+              fl["reference"] = fl_ref;
+
+              // Front right sensor
+              std::string fr_pos = payload.substr(16,1);
+              std::string fr_psi = payload.substr(20,1);
+              std::string fr_timeout = payload.substr(21,1);
+              std::string fr_temp = payload.substr(22,1);
+              std::string fr_rfQuality = payload.substr(23,1);
+              std::string fr_alarm = payload.substr(24,1);
+              std::string fr_ref= payload.substr(25,1);
+
+              // create json object
+              DynamicJsonDocument fr(1024);
+              fr["position"] = fr_pos;
+              fr["psi"] = fr_psi;
+              fr["timeout"] = fr_timeout;
+              fr["temperature"] = fr_temp;
+              fr["rfQuality"] = fr_rfQuality;
+              fr["alarm"] = fr_alarm;
+              fr["reference"] = fr_ref;
+
+              // Dualies Left Outer sensor
+              std::string dlo_pos = payload.substr(26,1);
+              std::string dlo_psi = payload.substr(30,1);
+              std::string dlo_timeout = payload.substr(31,1);
+              std::string dlo_temp = payload.substr(32,1);
+              std::string dlo_rfQuality = payload.substr(33,1);
+              std::string dlo_alarm = payload.substr(34,1);
+              std::string dlo_ref= payload.substr(35,1);
+
+              // create json object
+              DynamicJsonDocument dlo(1024);
+              dlo["position"] = dlo_pos;
+              dlo["psi"] = dlo_psi;
+              dlo["timeout"] = dlo_timeout;
+              dlo["temperature"] = dlo_temp;
+              dlo["rfQuality"] = dlo_rfQuality;
+              dlo["alarm"] = dlo_alarm;
+              dlo["reference"] = dlo_ref;
+
+              // Dualies Left Inner sensor
+              std::string dli_pos = payload.substr(36,1);
+              std::string dli_psi = payload.substr(40,1);
+              std::string dli_timeout = payload.substr(41,1);
+              std::string dli_temp = payload.substr(42,1);
+              std::string dli_rfQuality = payload.substr(43,1);
+              std::string dli_alarm = payload.substr(44,1);
+              std::string dli_ref= payload.substr(45,1);
+
+              // create json object
+              DynamicJsonDocument dli(1024);
+              dli["position"] = dli_pos;
+              dli["psi"] = dli_psi;
+              dli["timeout"] = dli_timeout;
+              dli["temperature"] = dli_temp;
+              dli["rfQuality"] = dli_rfQuality;
+              dli["alarm"] = dli_alarm;
+              dli["reference"] = dli_ref;
+
+              // Dualies Right Outer sensor
+              std::string dro_pos = payload.substr(46,1);
+              std::string dro_psi = payload.substr(50,1);
+              std::string dro_timeout = payload.substr(51,1);
+              std::string dro_temp = payload.substr(52,1);
+              std::string dro_rfQuality = payload.substr(53,1);
+              std::string dro_alarm = payload.substr(54,1);
+              std::string dro_ref= payload.substr(55,1);
+
+              // create json object
+              DynamicJsonDocument dro(1024);
+              dro["position"] = dro_pos;
+              dro["psi"] = dro_psi;
+              dro["timeout"] = dro_timeout;
+              dro["temperature"] = dro_temp;
+              dro["rfQuality"] = dro_rfQuality;
+              dro["alarm"] = dro_alarm;
+              dro["reference"] = dro_ref;
+
+              // Dualies Right Inner sensor
+              std::string dri_pos = payload.substr(56,1);
+              std::string dri_psi = payload.substr(60,1);
+              std::string dri_timeout = payload.substr(61,1);
+              std::string dri_temp = payload.substr(62,1);
+              std::string dri_rfQuality = payload.substr(63,1);
+              std::string dri_alarm = payload.substr(64,1);
+              std::string dri_ref= payload.substr(65,1);
+
+              // create json object
+              DynamicJsonDocument dri(1024);
+              dri["position"] = dri_pos;
+              dri["psi"] = dri_psi;
+              dri["timeout"] = dri_timeout;
+              dri["temperature"] = dri_temp;
+              dri["rfQuality"] = dri_rfQuality;
+              dri["alarm"] = dri_alarm;
+              dri["reference"] = dri_ref;
+
+              // Tag Left sensor
+              std::string tl_pos = payload.substr(66,1);
+              std::string tl_psi = payload.substr(70,1);
+              std::string tl_timeout = payload.substr(71,1);
+              std::string tl_temp = payload.substr(72,1);
+              std::string tl_rfQuality = payload.substr(73,1);
+              std::string tl_alarm = payload.substr(74,1);
+              std::string tl_ref= payload.substr(75,1);
+
+              // create json object
+              DynamicJsonDocument tl(1024);
+              tl["position"] = tl_pos;
+              tl["psi"] = tl_psi;
+              tl["timeout"] = tl_timeout;
+              tl["temperature"] = tl_temp;
+              tl["rfQuality"] = tl_rfQuality;
+              tl["alarm"] = tl_alarm;
+              tl["reference"] = tl_ref;
+
+              // Tag Right sensor
+              std::string tr_pos = payload.substr(76,1);
+              std::string tr_psi = payload.substr(80,1);
+              std::string tr_timeout = payload.substr(81,1);
+              std::string tr_temp = payload.substr(82,1);
+              std::string tr_rfQuality = payload.substr(83,1);
+              std::string tr_alarm = payload.substr(84,1);
+              std::string tr_ref= payload.substr(85,1);
+
+              // create json object
+              DynamicJsonDocument tr(1024);
+              tr["position"] = tr_pos;
+              tr["psi"] = tr_psi;
+              tr["timeout"] = tr_timeout;
+              tr["temperature"] = tr_temp;
+              tr["rfQuality"] = tr_rfQuality;
+              tr["alarm"] = tr_alarm;
+              tr["reference"] = tr_ref;
+
+              // Spare sensor
+              std::string spare_pos = payload.substr(86,1);
+              std::string spare_psi = payload.substr(90,1);
+              std::string spare_timeout = payload.substr(91,1);
+              std::string spare_temp = payload.substr(92,1);
+              std::string spare_rfQuality = payload.substr(93,1);
+              std::string spare_alarm = payload.substr(94,1);
+              std::string spare_ref= payload.substr(95,1);
+
+              // create json object
+              DynamicJsonDocument spare(1024);
+              spare["position"] = spare_pos;
+              spare["psi"] = spare_psi;
+              spare["timeout"] = spare_timeout;
+              spare["temperature"] = spare_temp;
+              spare["rfQuality"] = spare_rfQuality;
+              spare["alarm"] = spare_alarm;
+              spare["reference"] = spare_ref;
+
+              // Global Stats
+              std::string global_timeout = payload.substr(166);
+              std::string global_status = payload.substr(167);
+              std::string global_rfQuality = payload.substr(168);
+
+              // create json object
+              DynamicJsonDocument global(1024);
+              global["timeoutAll"] = global_timeout;
+              global["statusAll"] = global_status;
+              global["rfQualityAll"] = global_rfQuality;
+
+              // create combined json object
+              DynamicJsonDocument doc(1024);
+              doc["fl"] = fl;
+              doc["fr"] = fr;
+              doc["dlo"] = dlo;
+              doc["dli"] = dli;
+              doc["dro"] = dro;
+              doc["dri"] = dri;
+              doc["tl"] = tl;
+              doc["tr"] = tr;
+              doc["spare"] = spare;
+              doc["global"] = global;
+
+              // Convert JSON object to a string
+              String json_str;
+              serializeJson(doc, json_str);
+
+              // Send JSON string over MQTT
+              id(mqtt_client).publish ("my_topic", json_str.c_str());
+            };
