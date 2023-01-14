@@ -62,7 +62,7 @@ class UartReadLineSensor : public Component, public UARTDevice, public TextSenso
         case 11:
           doc["fl"] = sensor;
           break;
-        case 12:
+        case 14:
           doc["fr"] = sensor;
           break;
         case 21:
@@ -80,7 +80,7 @@ class UartReadLineSensor : public Component, public UARTDevice, public TextSenso
         case 31:
           doc["tl"] = sensor;
           break;
-        case 32:
+        case 34:
           doc["tr"] = sensor;
           break;
         case 41:

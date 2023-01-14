@@ -40,7 +40,7 @@ button:
               0x46,                           // Reference Pressure = 70 PSI
               
               // Tire Number 2 (Passenger Front Right)
-              0x12,                           // Position
+              0x14,                           // Position
               0x96,0xD5,0x2B,                 // Serial Number
               0x46,                           // Reference Pressure = 70 PSI
           
@@ -70,7 +70,7 @@ button:
               0x3C,                           // Reference Pressure = 60 PSI
               
               // Tire Number 8 (Tag Axle Right)
-              0x32,                           // Position
+              0x34,                           // Position
               0xAD,0xD5,0x2B,                 // Serial Number
               0x3C,                           // Reference Pressure = 60 PSI
               
