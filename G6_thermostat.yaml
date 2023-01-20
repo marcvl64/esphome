@@ -18,10 +18,7 @@ globals:
     type: int
     initial_value: "1" # Screen background set to grey
 
-#############################################################
-########### SUBSCRIBE TO MQTT TOPICS     ####################
-########### FROM VICTRON SYSTEM          ####################
-#############################################################
+# SUBSCRIBE TO MQTT TOPICS AND SEND UPDATED VALUES TO NEXTION
 mqtt:
   on_json_message:
     - topic: venus-home/N/d41243b5183f/vebus/276/Ac/ActiveIn/L1/P 
@@ -72,7 +69,39 @@ mqtt:
       then:
         - lambda: 'id(disp1).send_command_printf("propane=%d",int(x["value"]));' 
 
-
+    - topic: pressurepro/tpms/status
+      then:
+        - lambda: |-
+            for (JsonPairConst kv : x) {
+              if(kv.key() == "fl") {
+                id(disp1).send_command_printf("fl_p=%d",int(x["fl"]["psi"])); 
+                id(disp1).send_command_printf("fl_t=%d",int(x["fl"]["temperature"])); 
+              } else if (kv.key() == "fr") {
+                id(disp1).send_command_printf("fr_p=%d",int(x["fr"]["psi"])); 
+                id(disp1).send_command_printf("fr_t=%d",int(x["fr"]["temperature"])); 
+              } else if (kv.key() == "dlo") {
+                id(disp1).send_command_printf("dlo_p=%d",int(x["dlo"]["psi"])); 
+                id(disp1).send_command_printf("dlo_t=%d",int(x["dlo"]["temperature"])); 
+              } else if (kv.key() == "dli") {
+                id(disp1).send_command_printf("dli_p=%d",int(x["dli"]["psi"])); 
+                id(disp1).send_command_printf("dli_t=%d",int(x["dli"]["temperature"])); 
+              } else if (kv.key() == "dri") {
+                id(disp1).send_command_printf("dri_p=%d",int(x["dri"]["psi"])); 
+                id(disp1).send_command_printf("dri_t=%d",int(x["dri"]["temperature"])); 
+              } else if (kv.key() == "dro") {
+                id(disp1).send_command_printf("dro_p=%d",int(x["dro"]["psi"])); 
+                id(disp1).send_command_printf("dro_t=%d",int(x["dro"]["temperature"])); 
+              } else if (kv.key() == "tl") {
+                id(disp1).send_command_printf("tl_p=%d",int(x["tl"]["psi"])); 
+                id(disp1).send_command_printf("tl_t=%d",int(x["tl"]["temperature"])); 
+              } else if (kv.key() == "tr") {
+                id(disp1).send_command_printf("tr_p=%d",int(x["tr"]["psi"])); 
+                id(disp1).send_command_printf("tr_t=%d",int(x["tr"]["temperature"])); 
+              } else if (kv.key() == "spare") {
+                id(disp1).send_command_printf("spare_p=%d",int(x["spare"]["psi"])); 
+                id(disp1).send_command_printf("spare_t=%d",int(x["spare"]["temperature"])); 
+              }
+            }
 #############################################################
 ########### CONFIGURE NEXTION SCREEN ########################
 #############################################################
@@ -143,22 +172,14 @@ custom_component:
 
 
 sensor:
-#############################################################
-########### RETRIEVE NEXTION ACTIVE PAGE    #################
-########### UPDATE ALL COMPONENTS ON CHANGE  ################
+# RETRIEVE NEXTION ACTIVE PAGE
 # 0:HOME, 1: VICTRON, 2: TANK, 3: TPMS, 4: SLEEP, 5: BOOTUP SCREEN ##
-#############################################################
   - platform: nextion
     variable_name: dp
     id: active_page
-    on_value:
-      then:
-        - lambda: |-
-            id(disp1).send_command_printf("click m0,1"); 
 
-#############################################################
-########### RETRIEVE TEMP & HUMIDITY        #################
-########### FROM EXTERNAL SENSORS           #################
+# RETRIEVE TEMP & HUMIDITY
+# FROM EXTERNAL SENSORS 
   - platform: template
     id: tb_t
   - platform: template
