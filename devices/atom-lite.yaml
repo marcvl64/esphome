@@ -47,16 +47,3 @@ i2c:
   sda: 26
   scl: 32
   scan: true 
-
-# https://docs.m5stack.com/en/atom/atomic232
-uart:
-  tx_pin: 19
-  rx_pin: 22
-  baud_rate: 9600
-  id: uart_bus
-  debug:
-    direction: BOTH
-    dummy_receiver: true
-    after:
-      delimiter: "0x03"
-

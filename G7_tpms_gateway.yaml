@@ -2,6 +2,19 @@ substitutions:
   node_name: g7-tpms-gateway 
   friendly_name: TPMS Gateway 
 
+# https://docs.m5stack.com/en/atom/atomic232
+uart:
+  tx_pin: 19
+  rx_pin: 22
+  baud_rate: 9600
+  id: uart_bus
+  debug:
+    direction: BOTH
+    after:
+      delimiter: "0x03"
+    sequence:
+      - lambda: UARTDebug::log_string(direction, bytes);
+
 packages:
   device_base: !include devices/atom-lite.yaml
 
@@ -20,9 +33,21 @@ text_sensor:
     on_value:
       then:
         - mqtt.publish:
-            topic: some/topic
-            payload: id(tpms_update).state
+            topic: pressurepro/tpms/status
+            payload: !lambda |-
+              return id(tpms_update).state;
 button:
+  - platform: template
+    id: tpms_version
+    name: "TPMS version"
+    on_press:
+      then:
+        - uart.write: !lambda |-
+            unsigned char data[] = {
+              0x02,0x01,0x00,0x44,0x45,0x03
+            };
+            return std::vector<unsigned char>(std::begin(data), std::end(data));
+  
   - platform: template
     id: tpms_init
     name: "TPMS initialization"
@@ -36,47 +61,47 @@ button:
               
               // Tire Number 1 (Driver Front Left)
               0x11,                           // Position
-              0x6F,0xC8,0x2B,                 // Serial Number
+              0xBA, 0x9D, 0x86,                 // Serial Number
               0x46,                           // Reference Pressure = 70 PSI
               
               // Tire Number 2 (Passenger Front Right)
               0x14,                           // Position
-              0x96,0xD5,0x2B,                 // Serial Number
+              0xB2, 0x1D, 0x62,                 // Serial Number
               0x46,                           // Reference Pressure = 70 PSI
           
               // Tire Number 3 (Dualies Left Outer)
               0x21,                           // Position
-              0x80,0xCA,0x2B,                 // Serial Number
+              0xAF, 0x9D, 0x86,                 // Serial Number
               0x3C,                           // Reference Pressure = 60 PSI
               
               // Tire Number 4 (Dualies Left Inner)
               0x22,                           // Position
-              0x80,0xCA,0x2B,                 // Serial Number
+              0x69, 0xB5, 0x86,                 // Serial Number
               0x3C,                           // Reference Pressure = 60 PSI
               
               // Tire Number 5 (Dualies Right Inner)
               0x23,                           // Position
-              0x80,0xCA,0x2B,                 // Serial Number
+              0x6F, 0xB5, 0x86,                 // Serial Number
               0x3C,                           // Reference Pressure = 60 PSI
               
               // Tire Number 6 (Dualies Right Outer)
               0x24,                           // Position
-              0x80,0xCA,0x2B,                 // Serial Number
+              0xBF, 0x1D, 0x62,                 // Serial Number
               0x3C,                           // Reference Pressure = 60 PSI
               
               // Tire Number 7 (Tag Axle Left)
               0x31,                           // Position
-              0xAD,0xD5,0x2B,                 // Serial Number
+              0x64, 0xB5, 0x86,                 // Serial Number
               0x3C,                           // Reference Pressure = 60 PSI
               
               // Tire Number 8 (Tag Axle Right)
               0x34,                           // Position
-              0xAD,0xD5,0x2B,                 // Serial Number
+              0x78, 0x1D, 0x62,                 // Serial Number
               0x3C,                           // Reference Pressure = 60 PSI
               
               // Tire Number 9 (Spare)
               0x41,                           // Position
-              0x3C,0xC8,0x2B,                 // Serial Number
+              0x7A, 0x1D, 0x62,                 // Serial Number
               0x32,                           // Reference Pressure = 50 PSI
               
               
