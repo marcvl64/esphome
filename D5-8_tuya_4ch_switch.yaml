@@ -1,0 +1,59 @@
+substitutions:
+  node_name: d5-8-4chan-living
+  friendly_name: 4 channel switch living
+  switch1: D8 Master Switch
+  switch2: D5 Door Light
+  switch3: D6 Scare Light
+  switch4: D7 Floor Light
+
+packages:
+  device_base: !include devices/tuya-4ch.yaml
+
+mqtt:
+  on_message:
+    - topic: d5-8-4chan-living/light/d7_floor_light/remote
+      then:
+        - switch.toggle: switch1
+ 
+switch:
+  - platform: tuya
+    name: ${switch1}
+    id: switch1
+    switch_datapoint: 1
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+      - delay: 0.1s
+      - switch.turn_off: switch1
+
+light:
+  - platform: tuya
+    name: ${switch2}
+    id: switch2
+    switch_datapoint: 2
+
+  - platform: tuya
+    name: ${switch3}
+    id: switch3
+    switch_datapoint: 3
+
+  - platform: tuya
+    name: ${switch4}
+    id: switch4
+    switch_datapoint: 4
+
+#light:
+#  - platform: binary
+#    name: ${switch2}
+#    id: light2
+#    output: relay2
+#
+#  - platform: binary
+#    name: ${switch3}
+#    id: light3
+#    output: relay3
+#
+#  - platform: binary
+#    name: ${switch4}
+#    id: light4
+#    output: relay4
+#

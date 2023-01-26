@@ -1,0 +1,19 @@
+substitutions:
+  node_name: g5-motion-sensor
+  friendly_name: motion sensor
+  switch1: not_used_1
+  switch2: not_used_2
+
+packages:
+  device_base: !include devices/shelly-uni.yaml
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO12
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button1
+    name: "motion detected"

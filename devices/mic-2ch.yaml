@@ -1,0 +1,11 @@
+# Device details: https://www.amazon.com/gp/product/B071KFX63R/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1
+# NOTE: mode switching button on board needs to be set to the right mode for buttons/relays to work properly
+# Details on how to flash this device are similar to the Sonoff 4CH DYI: https://tasmota.github.io/docs/devices/Sonoff-4CH-DIY/
+
+substitutions:
+  node_platform: ESP8266
+  node_board: esp01_1m
+
+packages:
+  device_base: !include ../common/base.yaml
+  basic_sensors: !include ../common/basic_sensors.yaml

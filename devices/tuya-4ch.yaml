@@ -1,0 +1,27 @@
+# Device details: https://a.co/d/gXcM614
+# This device is a Tuya Wi-Fi Smart Controller, product number: TY-DIY-S04
+# NOTE: mode switching button on board needs to be set to the right mode for buttons/relays to work properly
+# Flashing this device with esphome is tricky:
+# 1/ Create header: G->Ground, V->3.3V, R->TX, T->RX, D->Ground
+# 2/ Push CH1 button and keep pressed in
+# 3/ Connect power to the unit (keep button pressed)
+# 4/ Flash the device (keep button pressed)
+
+substitutions:
+  node_platform: ESP8266
+  node_board: esp01_1m
+
+packages:
+  device_base: !include ../common/base.yaml
+  basic_sensors: !include ../common/basic_sensors.yaml
+
+logger:
+  baud_rate: 0
+
+uart:
+  rx_pin: GPIO3
+  tx_pin: GPIO1
+  baud_rate: 9600
+
+tuya:
+  status_pin: 13

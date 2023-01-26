@@ -1,0 +1,55 @@
+# Inspired by https://esphome.io/cookbook/dual-r2-cover.html
+
+
+substitutions:
+  node_name: g4-bar
+  friendly_name: "G4 - Bar"
+
+packages:
+  device_base: !include devices/mic-2ch.yaml
+
+switch:
+- platform: gpio
+  pin: GPIO12
+  id: open_cover
+- platform: gpio
+  pin: GPIO5
+  id: close_cover
+
+cover:
+- platform: time_based
+  name: "Cover"
+  id: my_cover
+  open_action:
+    - switch.turn_on: open_cover
+  open_duration: 60s
+  close_action:
+    - switch.turn_on: close_cover
+  close_duration: 60s
+  stop_action:
+    - switch.turn_off: open_cover
+    - switch.turn_off: close_cover
+
+binary_sensor:
+- platform: gpio
+  pin:
+    number: GPIO0
+    inverted: true
+  id: button_up
+  on_press:
+    then:
+      - switch.turn_on: open_cover
+  on_release:
+    then:
+      - switch.turn_off: open_cover
+- platform: gpio
+  pin:
+    number: GPIO9
+    inverted: true
+  id: button_down
+  on_press:
+    then:
+      - switch.turn_on: close_cover
+  on_release:
+    then:
+      - switch.turn_off: close_cover
