@@ -20,7 +20,6 @@ switch:
     name: ${switch1}
     id: switch1
     switch_datapoint: 1
-    restore_mode: ALWAYS_OFF
     on_turn_on:
       - delay: 0.1s
       - switch.turn_off: switch1
