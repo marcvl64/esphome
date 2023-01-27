@@ -1,3 +1,5 @@
+# issue to be solved: upon boot relay 1 and 2 ore on, but audio switch is off. both are therefore out of sync.
+
 substitutions:
   node_name: h2-4-4chan-overhead
   friendly_name: 4 channel switch 
@@ -5,6 +7,7 @@ substitutions:
   switch2: H2 Audio Right`
   switch3: H3 TV Switch
   switch4: H4 Beastie Overhead Switch
+  switch5: H2-4 Spare
 
 packages:
   device_base: !include devices/mic-4ch.yaml
@@ -18,11 +21,18 @@ binary_sensor:
         pullup: true
       inverted: true
     id: button1
-    on_press:
+    on_press: 
       then:
-        - switch.toggle: switch1
-        - switch.toggle: switch2
-
+        - lambda: |-
+            if (id(template_switch).state) {
+              id(template_switch).publish_state(false);
+              id(relay1).turn_off();
+              id(relay2).turn_off();
+            } else {
+              id(template_switch).publish_state(true);
+              id(relay1).turn_on();
+              id(relay2).turn_on();
+            }
   - platform: gpio
     pin:
       number: GPIO9
@@ -53,15 +63,24 @@ binary_sensor:
         pullup: true
       inverted: true
     id: button4
-   
+
 switch:
+  - platform: template
+    name: Switch Audio
+    id: template_switch
+    optimistic: true
+    turn_on_action:
+      - output.turn_on: relay1
+      - output.turn_on: relay2
+    turn_off_action:
+      - output.turn_off: relay1
+      - output.turn_off: relay2
+
   - platform: output
-    name: ${switch1}
     id: switch1
     output: relay1
 
   - platform: output
-    name: ${switch2}
     id: switch2
     output: relay2
 
