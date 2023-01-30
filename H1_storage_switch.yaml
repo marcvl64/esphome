@@ -1,0 +1,221 @@
+# RV Energy Saver
+
+# Energy comes at a premium in an RV. When in storage, an RV doesn't need to have 24 hour internet access, nor does Home Assistant need to run 24/7.
+# However, it would be useful for the RV to connect once a day so you can check on all systems/batteries, etc. That's what this program accomplishes.
+
+# We use a Shelly 1 Plus to provide or disconnect power to all electronics (Odroid Server, ethernet switch, GSM modem). The timer functionality is
+# implemented using ESPHome, and the timer configuration (sleep time and duration) is set through Home Assistant.
+
+# The system will sync time and configuration paramaters with HA while HA is on. When the time to sleep has arrived, power will be turned off,
+# and Shelly will start a countdown timer (independent of HA) for the duration of the sleep. when the countdown = 0, power will be reestablished and
+# HA will restart automatically.
+
+# Credit: @brianhanifin whose irrigation project and code became the basis for this project
+
+substitutions:
+  node_platform: ESP8266
+  node_board: esp01_1m
+  max_temp: "70.0"
+  node_name: h1_storage_switch
+  friendly_name: storage switch
+
+packages:
+  basic_sensors: !include common/basic_sensors.yaml
+
+esphome:
+  name: ${node_name}
+  platform: ${node_platform}
+  board: ${node_board}
+  build_path: ./build/${node_name}
+
+ota:
+
+logger:
+  level: VERY_VERBOSE
+
+wifi:
+  ssid: !secret WIFI_SSID
+  password: !secret  WIFI_PASSWORD
+
+  # Enable fallback hotspot (captive portal) in case WiFi connection fails - NOT SUPPORTED WITH ESP-IDF FRAMEWORK
+  ap:
+    ssid: ${friendly_name} 
+    password: !secret AP_PASSWORD
+
+  # Disable rebooting due to losing connection with Home Assistant. This will allow
+  # the schedule to continue while Home Assistant is sleeping. Should it become
+  # unresponsive, we can have Home Assistant power cycle a smart plug to reboot it.
+  reboot_timeout: 0s
+
+captive_portal:
+
+api:
+
+#===========================================================================#
+globals:
+  # Variable that tracks how much sleep time is remaining (in sec).
+  # The content of that variable gets published to HA through sleep_remaining sensor (in min).
+  - id: remaining_time
+    type: int
+    restore_value: no
+    initial_value: "30"
+
+  # Variable that tracks previous sleep time remaining (in sec).
+  - id: remaining_time_previous
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+
+#===========================================================================#
+# manual on/off button connected to Shelly 1
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+    name: Manual Power Switch
+    on_state:
+      then:
+        - switch.toggle: power_switch 
+    internal: true
+    id: device_key
+
+
+#===========================================================================#
+# Shelly 1 Relay
+switch:
+  - platform: gpio
+    pin: GPIO4
+    id: relay
+    on_turn_off:
+      then:
+        # Start countdown timer to next power on.
+        - globals.set:
+            id: remaining_time
+            value: !lambda return id(sleep_duration).state * 60;
+        # Show the remaining time.
+        - sensor.template.publish:
+            id: sleep_remaining
+            state: !lambda return id(sleep_duration).state;
+    on_turn_on:
+      then:
+        - sensor.template.publish:
+            id: sleep_remaining
+            state: "0"
+
+#===========================================================================#
+# virtual switch entity which toggles the relay, and stores the current state
+  - platform: template 
+    name: Power Switch 
+    id: power_switch 
+    lambda: return id(relay).state;
+    optimistic: true
+    turn_off_action:
+      # need to add more stuff here to shutdown HA server before cutting power
+      - switch.turn_off: relay
+    turn_on_action:
+      - switch.turn_on: relay
+
+sensor:
+  #===========================================================================#
+  # Sleep Duration
+  - platform: template
+    name: Sleep Duration
+    id: sleep_duration
+
+  # Retrieve Sleep Duration from Home Assistant
+  - platform: homeassistant
+    id: ui_sleep_duration
+    entity_id: input_number.sleep_duration
+    on_value:
+      then:
+      - sensor.template.publish:
+          id: sleep_duration
+          state: !lambda return id(ui_sleep_duration).state;
+
+  #===========================================================================#
+  # Countdown Sensor
+  - platform: template
+    name: Sleep Remaining
+    id: sleep_remaining
+    lambda: "return 0;"
+    accuracy_decimals: 0
+    unit_of_measurement: minutes
+    icon: mdi:timer
+    on_value:
+      then:
+        - if:
+            condition:
+              lambda: return id(remaining_time) == 0;
+            then:
+              - switch.turn_on: power_switch 
+
+text_sensor:
+  #===========================================================================#
+  # Sleep Time
+  - platform: template
+    name: Sleep Time
+    id: sleep_time
+
+  # Retrieve Sleep Time from Home Assistant
+  - platform: homeassistant
+    id: ui_sleep_time
+    entity_id: input_text.sleep_time
+    on_value:
+      then:
+        - text_sensor.template.publish:
+            id: sleep_time
+            state: !lambda return id(ui_sleep_time).state;
+
+#===========================================================================#
+# While sleeping (ie. power off), update countdown timer every 5 seconds
+# until it reaches 0, and then, turn power back on.
+interval:
+  - interval: 5s
+    then:
+      - lambda: |-
+          if (id(remaining_time) > 0) {
+            // store the previous time.
+            id(remaining_time_previous) = id(remaining_time);
+
+            // When the relay is off.
+            if(!id(relay).state) {
+              // Decrement the timer.
+              id(remaining_time) -= 5;
+
+              // Turn on the relay when the time reaches zero 
+              if (id(remaining_time) <= 0) {
+                id(power_switch).turn_on();
+                id(remaining_time) = 0;
+              }
+            }  
+            // Update remaining time display
+            if (id(remaining_time_previous) != id(remaining_time)) {
+              id(sleep_remaining).publish_state( (id(remaining_time)/60) + 1 );
+            }
+          } 
+
+ 
+#===========================================================================#
+# Turn power off when sleep time is reached
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+    on_time:
+      - seconds: 0
+        minutes: /1
+        then:
+          - lambda: |-
+              // Retrieve current time
+              auto time_now = id(homeassistant_time).now();
+              int time_hour = time_now.hour;
+              int time_minute = time_now.minute;
+
+              // Retrieve sleep time
+              int sleep_hour = atoi(id(sleep_time).state.substr(0,2).c_str());
+              int sleep_minute = atoi(id(sleep_time).state.substr(3,2).c_str());
+
+              // When sleep time = current time, turn off power
+              if ( time_hour == sleep_hour && time_minute == sleep_minute && id(sleep_duration).state != 0) {
+                id(power_switch).turn_off();
+              }  

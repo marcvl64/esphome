@@ -16,4 +16,23 @@ binary_sensor:
         pullup: true
       inverted: true
     id: button1
-    name: "motion detected"
+    name: "motion detected S1"
+
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button2
+    name: "motion detected S2"
+
+  - platform: template
+    name: "motion detected S1+S2"
+    lambda: |-
+      if (id(button1).state && id(button2).state) {
+        return true;
+      } else {
+        return false;
+      }
