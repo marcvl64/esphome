@@ -1,8 +1,8 @@
 substitutions:
   node_name: d9-10-sw-switch
   friendly_name: 2 channel switch living
-  switch1: DayNight
-  switch2: Beastie1
+  switch1: Beastie1
+  switch2: DayNight
 
 packages:
   device_base: !include devices/shelly-uni.yaml
@@ -34,11 +34,11 @@ binary_sensor:
 
 switch:
   - platform: template
-    name: Day/Night Switch
+    name: Beastie1 Switch
     id: switch1
     optimistic: true
 
   - platform: template
-    name: Beastie1 Switch
+    name: Day/Night Switch
     id: switch2
     optimistic: true

@@ -1,10 +1,10 @@
 substitutions:
   node_name: e2-4ch-shower
   friendly_name: shower lights
-  light_name_1: shower light 1
-  light_name_2: shower light 2
-  light_name_3: shower light 3
-  light_name_4: shower light 4
+#  light_name_1: shower light 1
+#  light_name_2: shower light 2
+#  light_name_3: shower light 3
+  light_name_4: shower light
   switch_name: shower Switch
 
 packages:
@@ -15,28 +15,10 @@ mqtt:
   on_message:
     - topic: "d5-8-4chan-living/switch/master_switch/state"
       then:
-        - light.turn_off: device_light_1
-        - light.turn_off: device_light_2
-        - light.turn_off: device_light_3
         - light.turn_off: device_light_4
 
 # This device is connected to 4 LED lights
 light:
-  - platform: monochromatic
-    name: ${light_name_1}
-    output: pwm_r
-    id: device_light_1
-
-  - platform: monochromatic
-    name: ${light_name_2}
-    output: pwm_g
-    id: device_light_2
-
-  - platform: monochromatic
-    name: ${light_name_3}
-    output: pwm_b
-    id: device_light_3
-
   - platform: monochromatic
     name: ${light_name_4}
     output: pwm_w
@@ -55,55 +37,25 @@ binary_sensor:
       then:
         - if:
             condition:
-              - light.is_off: device_light_1
-              - light.is_off: device_light_2
-              - light.is_off: device_light_3
               - light.is_off: device_light_4
             then:
-              - light.turn_on:
-                  id: device_light_1
-                  brightness: 1.0
-              - light.turn_on:
-                  id: device_light_2
-                  brightness: 1.0
-              - light.turn_on:
-                  id: device_light_3
-                  brightness: 1.0
               - light.turn_on:
                   id: device_light_4
                   brightness: 1.0
             else:
-              - light.turn_off: device_light_1
-              - light.turn_off: device_light_2
-              - light.turn_off: device_light_3
               - light.turn_off: device_light_4
  
     on_press:
       then:
         - if:
             condition:
-              light.is_off: device_light_1
+              light.is_off: device_light_4
             then:
               - delay: 0.5s
               - while:
                   condition:
                     binary_sensor.is_on: device_switch
                   then:
-                    - light.dim_relative:
-                        id: device_light_1
-                        relative_brightness: 5%
-                        transition_length: 0.1s
-                    - delay: 0.1s
-                    - light.dim_relative:
-                        id: device_light_2
-                        relative_brightness: 5%
-                        transition_length: 0.1s
-                    - delay: 0.1s
-                    - light.dim_relative:
-                        id: device_light_3
-                        relative_brightness: 5%
-                        transition_length: 0.1s
-                    - delay: 0.1s
                     - light.dim_relative:
                         id: device_light_4
                         relative_brightness: 5%
@@ -115,23 +67,8 @@ binary_sensor:
                   condition:
                     and:
                       - binary_sensor.is_on: device_switch
-                      - light.is_on: device_light_1
+                      - light.is_on: device_light_4
                   then:
-                    - light.dim_relative:
-                        id: device_light_1
-                        relative_brightness: -5%
-                        transition_length: 0.1s
-                    - delay: 0.1s
-                    - light.dim_relative:
-                        id: device_light_2
-                        relative_brightness: -5%
-                        transition_length: 0.1s
-                    - delay: 0.1s
-                    - light.dim_relative:
-                        id: device_light_3
-                        relative_brightness: -5%
-                        transition_length: 0.1s
-                    - delay: 0.1s
                     - light.dim_relative:
                         id: device_light_4
                         relative_brightness: -5%

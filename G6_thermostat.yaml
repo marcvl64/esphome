@@ -41,7 +41,7 @@ mqtt:
       then:
         - lambda: 'id(disp1).send_command_printf("battpower=%d",int(x["value"]));' 
 
-    - topic: venus-home/N/d41243b5183f/solarcharger/278/Yield/Power
+    - topic: venus-home/N/d41243b5183f/solarcharger/279/Yield/Power
       then:
         - lambda: 'id(disp1).send_command_printf("solarpower=%d",int(x["value"]));' 
 
@@ -53,19 +53,19 @@ mqtt:
       then:
         - lambda: 'id(disp1).send_command_printf("invmode=%d",int(x["value"]));' 
 
-    - topic: venus-home/N/d41243b5183f/greytank
+    - topic: venus-home/N/d41243b5183f/tank/2/Level
       then:
         - lambda: 'id(disp1).send_command_printf("grey=%d",int(x["value"]));' 
 
-    - topic: venus-home/N/d41243b5183f/blacktank
+    - topic: venus-home/N/d41243b5183f/tank/0/Level
       then:
         - lambda: 'id(disp1).send_command_printf("black=%d",int(x["value"]));' 
 
-    - topic: venus-home/N/d41243b5183f/freshtank
+    - topic: venus-home/N/d41243b5183f/tank/1/Level
       then:
         - lambda: 'id(disp1).send_command_printf("fresh=%d",int(x["value"]));' 
 
-    - topic: venus-home/N/d41243b5183f/propanetank
+    - topic: venus-home/N/d41243b5183f/tank/32/Level
       then:
         - lambda: 'id(disp1).send_command_printf("propane=%d",int(x["value"]));' 
 

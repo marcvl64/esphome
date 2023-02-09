@@ -15,12 +15,13 @@ mqtt:
         - light.turn_off: device_light
 
 # This device is connected to an RGBW strip
+# Light was wired incorrectly - fixed through software
 light:
   - platform: rgbw
     name: ${light_name}
-    red: pwm_r
-    green: pwm_g
-    blue: pwm_b
+    red: pwm_g
+    green: pwm_b
+    blue: pwm_r
     white: pwm_w
     effects:
       - random:
@@ -53,9 +54,9 @@ binary_sensor:
                   then:
                     - light.dim_relative:
                         id: device_light
-                        relative_brightness: 5%
+                        relative_brightness: 2%
                         transition_length: 0.1s
-                    - delay: 0.4s
+                    - delay: 0.1s
             else:
               - delay: 0.5s
               - while:
@@ -66,7 +67,7 @@ binary_sensor:
                   then:
                     - light.dim_relative:
                         id: device_light
-                        relative_brightness: -5%
+                        relative_brightness: -2%
                         transition_length: 0.1s
-                    - delay: 0.4s
+                    - delay: 0.1s
 
