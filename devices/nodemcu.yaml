@@ -1,0 +1,11 @@
+# Device details: 
+# https://esphome.io/devices/nodemcu_esp8266.html
+# Purchased from Amazon: https://a.co/d/5AQN3yV
+
+substitutions:
+  node_platform: ESP8266
+  node_board: nodemcuv2
+
+packages:
+  device_base: !include ../common/base.yaml
+  basic_sensors: !include ../common/basic_sensors.yaml
