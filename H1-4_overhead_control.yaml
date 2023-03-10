@@ -1,41 +1,35 @@
 # issue to be solved: upon boot relay 1 and 2 ore on, but audio switch is off. both are therefore out of sync.
 
 substitutions:
-  node_name: h2-4-4chan-overhead
+  node_name: h1-4-overhead-control
   friendly_name: 4 channel switch 
-  switch1: H2 Audio Left
-  switch2: H2 Audio Right`
-  switch3: H3 TV Switch
-  switch4: H4 Beastie Overhead Switch
-  switch5: H2-4 Spare
 
 packages:
-  device_base: !include devices/mic-4ch.yaml
+  device_base: !include devices/nodemcu.yaml
 
 binary_sensor:
   - platform: gpio
     pin:
-      number: GPIO0
+      number: D0
       mode:
         input: true
-        pullup: true
       inverted: true
     id: button1
     on_press: 
       then:
         - lambda: |-
-            if (id(template_switch).state) {
-              id(template_switch).publish_state(false);
+            if (id(switch1).state) {
+              id(switch1).publish_state(false);
               id(relay1).turn_off();
               id(relay2).turn_off();
             } else {
-              id(template_switch).publish_state(true);
+              id(switch1).publish_state(true);
               id(relay1).turn_on();
               id(relay2).turn_on();
             }
   - platform: gpio
     pin:
-      number: GPIO9
+      number: D1
       mode:
         input: true
         pullup: true
@@ -46,7 +40,7 @@ binary_sensor:
 
   - platform: gpio
     pin:
-      number: GPIO10
+      number: D2
       mode:
         input: true
         pullup: true
@@ -57,7 +51,7 @@ binary_sensor:
 
   - platform: gpio
     pin:
-      number: GPIO14
+      number: D5
       mode:
         input: true
         pullup: true
@@ -67,7 +61,7 @@ binary_sensor:
 switch:
   - platform: template
     name: Switch Audio
-    id: template_switch
+    id: switch1
     optimistic: true
     turn_on_action:
       - output.turn_on: relay1
@@ -76,20 +70,26 @@ switch:
       - output.turn_off: relay1
       - output.turn_off: relay2
 
-  - platform: output
-    id: switch1
-    output: relay1
-
-  - platform: output
+  - platform: template
+    name: Beastie Switch Overhead
     id: switch2
-    output: relay2
+    optimistic: true
 
-  - platform: output
-    name: ${switch3}
+  - platform: template
+    name: TV Switch
     id: switch3
-    output: relay3
+    optimistic: true
 
-  - platform: output
-    name: ${switch4}
+  - platform: template
+    name: Storage Switch
     id: switch4
-    output: relay4
+    optimistic: true
+
+output:
+  - platform: gpio
+    pin: D7
+    id: relay1
+
+  - platform: gpio
+    pin: D6
+    id: relay2
