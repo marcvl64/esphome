@@ -1,0 +1,7 @@
+substitutions:
+  node_name: b9-dometic-vac
+  friendly_name: "B9 - VAC"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-1pm.yaml
