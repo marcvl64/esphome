@@ -104,12 +104,27 @@ button:
               0x7A, 0x1D, 0x62,                 // Serial Number
               0x32,                           // Reference Pressure = 50 PSI
               
-              
-              // Tires Number 10 through 16 (Not Used)
-              0xFF,0x00,0x00,0x00,0xFF,       // Tire 10
-              0xFF,0x00,0x00,0x00,0xFF,       // Tire 11
-              0xFF,0x00,0x00,0x00,0xFF,       // Tire 12
-              0xFF,0x00,0x00,0x00,0xFF,       // Tire 13
+              // Airbag Number 1 (Driver front Left)
+              0x51,                           // Position
+              0xC7, 0x04, 0xC3,                 // Serial Number
+              0x3C,                           // Reference Pressure = 60 PSI
+
+              // Airbag Number 2 (Passenger front Right)
+              0x52,                           // Position
+              0x7B, 0x94, 0x78,                 // Serial Number
+              0x3C,                           // Reference Pressure = 60 PSI
+
+              // Airbag Number 3 (Back - System Pressure)
+              0x53,                           // Position
+              0x21, 0x03, 0xC3,                 // Serial Number
+              0x50,                           // Reference Pressure = 80 PSI
+
+              // Airbag Number 4 (Back - Airbags Pressure)
+              0x54,                           // Position
+              0x61, 0xC9, 0x8C,                 // Serial Number
+              0x50,                           // Reference Pressure = 80 PSI
+
+              // Tires Number 14 through 16 (Not Used)
               0xFF,0x00,0x00,0x00,0xFF,       // Tire 14
               0xFF,0x00,0x00,0x00,0xFF,       // Tire 15
               0xFF,0x00,0x00,0x00,0xFF,       // Tire 16

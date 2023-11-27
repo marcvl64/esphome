@@ -90,6 +90,18 @@ class UartReadLineSensor : public Component, public UARTDevice, public TextSenso
         case 0x41:
           doc["spare"] = sensor;
           break;
+        case 0x51:
+          doc["al"] = sensor;
+          break;
+        case 0x52:
+          doc["ar"] = sensor;
+          break;
+        case 0x53:
+          doc["as"] = sensor;
+          break;
+        case 0x54:
+          doc["aa"] = sensor;
+          break;
       }
     }
     // convert JSON object to string
