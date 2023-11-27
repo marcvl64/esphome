@@ -1,0 +1,7 @@
+substitutions:
+  node_name: b6-nutone
+  friendly_name: "B6 - Nutone"
+  switch_name: Switch 1
+
+packages:
+  device_base: !include devices/shelly-1pm.yaml

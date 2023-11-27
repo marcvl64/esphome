@@ -10,9 +10,10 @@ packages:
 binary_sensor:
   - platform: gpio
     pin:
-      number: D0
+      number: D1
       mode:
         input: true
+        pullup: true
       inverted: true
     id: button1
     on_press: 
@@ -29,7 +30,7 @@ binary_sensor:
             }
   - platform: gpio
     pin:
-      number: D1
+      number: D2
       mode:
         input: true
         pullup: true
@@ -40,10 +41,9 @@ binary_sensor:
 
   - platform: gpio
     pin:
-      number: D2
+      number: D0
       mode:
         input: true
-        pullup: true
       inverted: true
     id: button3
     on_press:
@@ -57,6 +57,8 @@ binary_sensor:
         pullup: true
       inverted: true
     id: button4
+    on_press:
+      - switch.toggle: switch2
 
 switch:
   - platform: template
