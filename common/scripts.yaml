@@ -1,0 +1,57 @@
+script:
+  - id: all_lights_off
+    then:
+      - lambda: |-
+          id(mqtt_client).publish("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";}); 
+          id(mqtt_client).publish("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";}); 
+          id(mqtt_client).publish("d3-overhead-bl/light/bl_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";}); 
+          id(mqtt_client).publish("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish("d5-8-4chan-living/light/d5_door_light/command", "OFF"); 
+          id(mqtt_client).publish("d5-8-4chan-living/light/d6_scare_light/command", "OFF"); 
+          id(mqtt_client).publish("d5-8-4chan-living/light/d7_floor_light/command", "OFF"); 
+          id(mqtt_client).publish("e1-4ch-bathroom/light/bathroom_light_1/command", [=] (JsonObject root) {
+ 
+          id(mqtt_client).publish("e1-4ch-bathroom/light/bathroom_light_2/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish("e1-4ch-bathroom/light/hallway_light_1/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish("e1-4ch-bathroom/light/hallway_light_2/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish("f1-4ch-bedroom/light/bedroom_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+
+  - id: lights_on
+    then:
+      - lambda: |-
+          id(mqtt_client).publish("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";});
+          id(mqtt_client).publish("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";});
+          id(mqtt_client).publish("d3-overhead-bl/light/bl_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";});
+          id(mqtt_client).publish("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";});
+
+  - id: all_off
+    then:
+      - lambda: |-
+          id(all_lights_off).execute();
+          id(mqtt_client).publish("g3-waterpump/switch/g3_-_waterpump_relay/command", "OFF");
+
+  - id: movie_mode_on
+    then:
+      - lambda: |-
+          id(mqtt_client).publish("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";
+            root["brightness"] = 20;});
+          id(mqtt_client).publish("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish("d3-overhead-bl/light/bl_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish("d5-8-4chan-living/light/d7_floor_light/command", "ON");
