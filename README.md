@@ -1,5 +1,5 @@
-# Smart RV Esphome Configuration
-## Configuration files for all sensors in a smart motorhome
+Esphome on the road
+## Configuration files for smart devices in a motorhome/trailer setting
 
 <br/>
 
@@ -44,3 +44,6 @@
 ## Home Assistant integration:
  - Integrates with Home Assistant through MQTT (you need MQTT enabled on the HA side)
  - Supports MQTT auto-discovery. No configuration needed on the HA side.
+
+## Thanks to:
+ - Sloopdog for providing the reverse engineeered Dometic protocols (https://github.com/Sloopdog/Ardunio-Code-Dometic-AC)
