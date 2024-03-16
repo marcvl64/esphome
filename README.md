@@ -1,6 +1,15 @@
 # Smart RV Esphome Configuration
 ## Configuration files for all sensors in a smart motorhome
 
+<br/>
+
+[![Badge License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt)
+ &nbsp;
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
+
+</div>
+<br>
+
 ## Description of architecture and list of devices:
  - Smart RV design and architecture: https://beastie.vanlerberghe.name/technical-geek-out/ 
  - Device list: https://docs.google.com/spreadsheets/d/1aTh7m6LYdMRNLjVMNrLpdHNzDydQJWMs9_gpU5-6vIQ/edit?usp=sharing
