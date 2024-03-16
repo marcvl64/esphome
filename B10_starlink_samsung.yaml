@@ -1,0 +1,8 @@
+substitutions:
+  node_name: b10-starlink-samsung
+  friendly_name: "B10 - Starlink - Samsung"
+  switch_name_1: Starlink
+  switch_name_2: Samsung
+
+packages:
+  device_base: !include devices/shelly-25.yaml

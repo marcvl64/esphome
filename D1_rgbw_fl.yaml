@@ -1,6 +1,6 @@
 substitutions:
-  node_name: overhead-fl
-  friendly_name: overhead front left light
+  node_name: d1-overhead-fl
+  friendly_name: D1 - overhead fl light
   light_name: fl Light
   switch_name: fl Switch
 
