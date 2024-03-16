@@ -1,16 +1,16 @@
 # Smart RV Esphome Configuration
 ## Configuration files for all sensors in a smart motorhome
 
-## device/sensor support:
+## Description of architecture and list of devices:
+ - Smart RV design and architecture: https://beastie.vanlerberghe.name/technical-geek-out/ 
+ - Device list: https://docs.google.com/spreadsheets/d/1aTh7m6LYdMRNLjVMNrLpdHNzDydQJWMs9_gpU5-6vIQ/edit?usp=sharing
+
+## device support:
  - Shelly: 1, 1pm, 2.5, em, +1, rgbw2, uni
  - Sonoff: nsp panel 
  - Tuya: 4ch relay
  - M5stack: atom-lite
  - Dev boards: nodemcu
-
-## device list and overall architecture considerations:
- - Smart RV design and architecture: https://beastie.vanlerberghe.name/technical-geek-out/ 
- - Device list: https://docs.google.com/spreadsheets/d/1aTh7m6LYdMRNLjVMNrLpdHNzDydQJWMs9_gpU5-6vIQ/edit?usp=sharing
 
 ## Configuration considerations:
  - Relies on separate config.py file to store secrets (WiFI and MQTT connection details)
