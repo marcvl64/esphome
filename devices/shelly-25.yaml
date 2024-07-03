@@ -3,7 +3,7 @@
 substitutions:
   node_platform: ESP8266
   node_board: esp01_1m
-  max_temp: "70.0"
+  max_temp: "90.0"
   max_power: "1000"
 
 packages:
@@ -78,7 +78,7 @@ sensor:
     id: temp_analog_reading
     pin: A0
 
-  - platform: ade7953
+  - platform: ade7953_i2c
     irq_pin: GPIO16 # Prevent overheating by setting this
     voltage:
       name: ${friendly_name} voltage

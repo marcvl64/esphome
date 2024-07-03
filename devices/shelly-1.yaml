@@ -9,30 +9,13 @@ packages:
   basic_sensors: !include ../common/basic_sensors.yaml
 
 # All Shelly 1 devices are turned off by master switch
-mqtt:
-  on_message:
-    - topic: "test-master-switch/switch/master_switch/state"
-      then:
-        - light.turn_off: device_light
+#mqtt:
+#  on_message:
+#    - topic: "test-master-switch/switch/master_switch/state"
+#      then:
+#        - light.turn_off: device_light
 
 output:
   - platform: gpio
     pin: GPIO4
     id: device_relay_1
-
-light:
-  - platform: binary
-    name: ${light_name}
-    output: device_relay_1
-    id: device_light
-
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: GPIO5
-    name: ${switch_name}
-    on_state:
-      then:
-        - light.toggle: device_light
-    internal: true
-    id: device_switch

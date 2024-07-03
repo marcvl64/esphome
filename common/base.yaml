@@ -8,6 +8,7 @@ esphome:
 logger:
 
 ota:
+  - platform: esphome
 
 wifi:
   ssid: !secret WIFI_SSID
