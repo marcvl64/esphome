@@ -1,5 +1,6 @@
 script:
 # turn off all interior lights
+# tested 10/29/2024
   - id: all_int_lights_off
     then:
       - lambda: |-
@@ -13,13 +14,11 @@ script:
             root["state"] = "OFF";});
           id(mqtt_client).publish_json("d5-8-4chan-living/light/d7_floor_light/command",  [=] (JsonObject root) {
             root["state"] = "OFF";});
-          id(mqtt_client).publish_json("e1-4ch-bathroom/light/bathroom_light_1/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("e1-4ch-bathroom/light/bathroom/command", [=] (JsonObject root) {
             root["state"] = "OFF";}); 
-          id(mqtt_client).publish_json("e1-4ch-bathroom/light/bathroom_light_2/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("e1-4ch-bathroom/light/hallway/command", [=] (JsonObject root) {
             root["state"] = "OFF";});
-          id(mqtt_client).publish_json("e1-4ch-bathroom/light/hallway_light_1/command", [=] (JsonObject root) {
-            root["state"] = "OFF";});
-          id(mqtt_client).publish_json("e1-4ch-bathroom/light/hallway_light_2/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("e2-4ch-shower/light/shower_light/command", [=] (JsonObject root) {
             root["state"] = "OFF";});
           id(mqtt_client).publish_json("f1-4ch-bedroom/light/bedroom_light/command", [=] (JsonObject root) {
             root["state"] = "OFF";});
@@ -33,7 +32,7 @@ script:
           id(mqtt_client).publish_json("d5-8-4chan-living/light/d6_scare_light/command", [=] (JsonObject root) {
             root["state"] = "OFF";});
 
-#  turn off all lights
+# turn off all lights
   - id: all_lights_off
     then:
       - lambda: |-
@@ -95,6 +94,8 @@ script:
           id(mqtt_client).publish("b9-dometic-vac/switch/b9_-_vac/command", "ON");
 
 # sleep mode - all interior lights off, water pump off
+# used with F2-4_4ch_switch.yaml // ALL OFF button
+# tested 10/29/2024
   - id: all_off
     then:
       - lambda: |-

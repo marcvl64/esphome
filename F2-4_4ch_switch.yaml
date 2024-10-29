@@ -34,7 +34,7 @@ binary_sensor:
       inverted: true
     id: button2
     on_press:
-      - script.execute: all_int_lights_off 
+      - script.execute: all_off 
 #      - switch.turn_on: switch2
 
   - platform: gpio
