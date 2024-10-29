@@ -76,7 +76,7 @@ button:
               
               // Tire Number 4 (Dualies Left Inner)
               0x22,                           // Position
-              0x69, 0xB5, 0x86,                 // Serial Number
+              0x3F, 0x5A, 0x74,                // Serial Number (new)
               0x3C,                           // Reference Pressure = 60 PSI
               
               // Tire Number 5 (Dualies Right Inner)
