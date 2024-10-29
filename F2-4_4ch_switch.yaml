@@ -6,6 +6,7 @@ substitutions:
 
 packages:
   device_base: !include devices/mic-4ch.yaml
+  automations: !include common/scripts.yaml
 
 binary_sensor:
 # this implements a 3-way software switch by instructing
@@ -33,7 +34,8 @@ binary_sensor:
       inverted: true
     id: button2
     on_press:
-      - switch.toggle: switch2
+      - script.execute: all_int_lights_off 
+#      - switch.turn_on: switch2
 
   - platform: gpio
     pin:
@@ -51,6 +53,9 @@ switch:
     name: ${switch2}
     id: switch2
     optimistic: true
+    on_turn_on:
+      then:
+        - script.execute: all_int_lights_off 
 
   - platform: template
     name: ${switch3}

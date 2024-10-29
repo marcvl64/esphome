@@ -1,52 +1,89 @@
 script:
+# turn off all interior lights
+  - id: all_int_lights_off
+    then:
+      - lambda: |-
+          id(mqtt_client).publish_json("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";}); 
+          id(mqtt_client).publish_json("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";}); 
+          id(mqtt_client).publish_json("overhead-bl/light/bl_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";}); 
+          id(mqtt_client).publish_json("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish_json("d5-8-4chan-living/light/d7_floor_light/command",  [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish_json("e1-4ch-bathroom/light/bathroom_light_1/command", [=] (JsonObject root) {
+            root["state"] = "OFF";}); 
+          id(mqtt_client).publish_json("e1-4ch-bathroom/light/bathroom_light_2/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish_json("e1-4ch-bathroom/light/hallway_light_1/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish_json("e1-4ch-bathroom/light/hallway_light_2/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish_json("f1-4ch-bedroom/light/bedroom_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+
+# turn off all exterior lights
+  - id: all_ext_lights_off
+    then:
+      - lambda: |-
+          id(mqtt_client).publish_json("d5-8-4chan-living/light/d5_door_light/command", [=] (JsonObject root) { 
+            root["state"] = "OFF";});
+          id(mqtt_client).publish_json("d5-8-4chan-living/light/d6_scare_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+
+#  turn off all lights
   - id: all_lights_off
     then:
       - lambda: |-
-          id(mqtt_client).publish("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
-            root["state"] = "OFF";}); 
-          id(mqtt_client).publish("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
-            root["state"] = "OFF";}); 
-          id(mqtt_client).publish("d3-overhead-bl/light/bl_light/command", [=] (JsonObject root) {
-            root["state"] = "OFF";}); 
-          id(mqtt_client).publish("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
-            root["state"] = "OFF";});
-          id(mqtt_client).publish("d5-8-4chan-living/light/d5_door_light/command", [=] (JsonObject root) { 
-            root["state"] = "OFF";});
-          id(mqtt_client).publish("d5-8-4chan-living/light/d6_scare_light/command", [=] (JsonObject root) {
-            root["state"] = "OFF";});
-          id(mqtt_client).publish("d5-8-4chan-living/light/d7_floor_light/command",  [=] (JsonObject root) {
-            root["state"] = "OFF";});
-          id(mqtt_client).publish("e1-4ch-bathroom/light/bathroom_light_1/command", [=] (JsonObject root) {
-            root["state"] = "OFF";}); 
-          id(mqtt_client).publish("e1-4ch-bathroom/light/bathroom_light_2/command", [=] (JsonObject root) {
-            root["state"] = "OFF";});
-          id(mqtt_client).publish("e1-4ch-bathroom/light/hallway_light_1/command", [=] (JsonObject root) {
-            root["state"] = "OFF";});
-          id(mqtt_client).publish("e1-4ch-bathroom/light/hallway_light_2/command", [=] (JsonObject root) {
-            root["state"] = "OFF";});
-          id(mqtt_client).publish("f1-4ch-bedroom/light/bedroom_light/command", [=] (JsonObject root) {
-            root["state"] = "OFF";});
+          id(all_int_lights_off).execute();
+          id(all_ext_lights_off).execute();
 
+# turn on main interior lights
   - id: lights_on
     then:
       - lambda: |-
-          id(mqtt_client).publish("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
             root["state"] = "ON";});
-          id(mqtt_client).publish("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
             root["state"] = "ON";});
-          id(mqtt_client).publish("d3-overhead-bl/light/bl_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("overhead-bl/light/bl_light/command", [=] (JsonObject root) {
             root["state"] = "ON";});
-          id(mqtt_client).publish("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
             root["state"] = "ON";});
+
+# close all blinds
+  - id: blinds_closed
+    then:
+      - lambda: |-
+          id(mqtt_client).publish("somfy/bath", "d");
+          id(mqtt_client).publish("somfy/bedroom1", "d");
+          id(mqtt_client).publish("somfy/bedroom2", "d");
+          id(mqtt_client).publish("somfy/dining", "d");
+          id(mqtt_client).publish("somfy/kitchen", "d");
+          id(mqtt_client).publish("somfy/living1", "d");
+          id(mqtt_client).publish("somfy/living2", "d");
+
+# open all blinds, except for bathroom
+  - id: blinds_open
+    then:
+      - lambda: |-
+          id(mqtt_client).publish("somfy/bedroom1", "u"); 
+          id(mqtt_client).publish("somfy/bedroom2", "u");
+          id(mqtt_client).publish("somfy/dining", "u");
+          id(mqtt_client).publish("somfy/kitchen", "u");
+          id(mqtt_client).publish("somfy/living1", "u");
+          id(mqtt_client).publish("somfy/living2", "u");
 
 # turning off 110V appliances (except 2 fridges, dishwasher and Starlink)
   - id: appliances_off
     then:
       - lambda: |-
-          id(mqtt_client).publish("b10-starlink-samsung/switch/b10_-_starlink_-_samsung_relay_1/command", "OFF");
-          id(mqtt_client).publish("b4-bosch-coffee/switch/b4_-_coffee/command", "OFF");
-          id(mqtt_client).publish("b6-nutone/switch/b6_-_nutone/command", "OFF");
-          id(mqtt_client).publish("b9-dometic-vac/switch/b9_-_vac/command", "OFF");
+          id(mqtt_client).publish ("b10-starlink-samsung/switch/b10_-_starlink_-_samsung_relay_1/command", "OFF");
+          id(mqtt_client).publish ("b4-bosch-coffee/switch/b4_-_coffee/command", "OFF");
+          id(mqtt_client).publish ("b6-nutone/switch/b6_-_nutone/command", "OFF");
+          id(mqtt_client).publish ("b9-dometic-vac/switch/b9_-_vac/command", "OFF");
 
 # turning on 110V appliances (except 2 fridges, dishwasher and Starlink)
   - id: appliances_on
@@ -57,109 +94,110 @@ script:
           id(mqtt_client).publish("b6-nutone/switch/b6_-_nutone/command", "ON");
           id(mqtt_client).publish("b9-dometic-vac/switch/b9_-_vac/command", "ON");
 
-# sleep mode
+# sleep mode - all interior lights off, water pump off
   - id: all_off
     then:
       - lambda: |-
-          id(all_lights_off).execute();
+          id(all_int_lights_off).execute();
           id(mqtt_client).publish("g3-waterpump/switch/g3_-_waterpump_relay/command", "OFF");
 
+# movie mode: turn off all main lights except driver side, lower projection screen, set audio, turn on projector and lower blindes
   - id: movie_mode_on
     then:
       - lambda: |-
-          id(mqtt_client).publish("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
             root["state"] = "ON";
             root["brightness"] = 20;});
-          id(mqtt_client).publish("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
             root["state"] = "OFF";});
-          id(mqtt_client).publish("d3-overhead-bl/light/bl_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("overhead-bl/light/bl_light/command", [=] (JsonObject root) {
             root["state"] = "OFF";});
-          id(mqtt_client).publish("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
             root["state"] = "OFF";});
-          id(mqtt_client).publish("d5-8-4chan-living/light/d7_floor_light/command", [=] (JsonObject root) {
+          id(mqtt_client).publish_json("d5-8-4chan-living/light/d7_floor_light/command", [=] (JsonObject root) {
             root["state"] = "ON";});
           id(mqtt_client).publish("b10-starlink-samsung/switch/b10_-_starlink_-_samsung_relay_1/command", "ON");
           id(mqtt_client).publish("h1-4-overhead-control/switch/switch_audio","OFF");
-#         add blinds living room down
-#         add projection screen down
+          id(mqtt_client).publish("somfy/living_group", "d");
+          id(mqtt_client).publish("somfy/projector", "d");
 
 # turning off movie mode during the day means turning off living light and restoring default brightness,
 # turning off projector, raising projection screen and blinds
-  -id: movie_mode_off_day
-   then:
-     - lambda: |-
-         id(mqtt_client).publish("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
-           root["state"] = "OFF";
-           root["brightness"] = 100;});
-         id(mqtt_client).publish("b10-starlink-samsung/switch/b10_-_starlink_-_samsung_relay_1/command", "OFF");
-#        add projection screen up
-#        add blinds living room up
+  - id: movie_mode_off_day
+    then:
+      - lambda: |-
+          id(mqtt_client).publish_json("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";
+            root["brightness"] = 100;});
+          id(mqtt_client).publish("b10-starlink-samsung/switch/b10_-_starlink_-_samsung_relay_1/command", "OFF");
+          id(mqtt_client).publish("somfy/living_group", "u");
+          id(mqtt_client).publish("somfy/projector", "u");
 
 # turning off movie mode at night means turning the lights back on, turning off projector, raising projection screen.
 # The blinds can stay down.
-  -id: movie_mode_off_night
-   then:
-     - lambda: |-
-         id(mqtt_client).publish("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
-           root["state"] = "ON";
-           root["brightness"] = 100;});
-         id(mqtt_client).publish("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
-           root["state"] = "ON";});
-         id(mqtt_client).publish("d3-overhead-bl/light/bl_light/command", [=] (JsonObject root) {
-           root["state"] = "ON";});
-         id(mqtt_client).publish("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
-           root["state"] = "ON";});
-         id(mqtt_client).publish("d5-8-4chan-living/light/d7_floor_light/command", [=] (JsonObject root) {
-           root["state"] = "OFF";});
-         id(mqtt_client).publish("b10-starlink-samsung/switch/b10_-_starlink_-_samsung_relay_1/command", "OFF");
-#        add projection screen up
+  - id: movie_mode_off_night
+    then:
+      - lambda: |-
+          id(mqtt_client).publish_json("d1-overhead-fl/light/fl_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";
+            root["brightness"] = 100;});
+          id(mqtt_client).publish_json("d2-overhead-fr/light/fr_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";});
+          id(mqtt_client).publish_json("overhead-bl/light/bl_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";});
+          id(mqtt_client).publish_json("d4-overhead-br/light/br_light/command", [=] (JsonObject root) {
+            root["state"] = "ON";});
+          id(mqtt_client).publish_json("d5-8-4chan-living/light/d7_floor_light/command", [=] (JsonObject root) {
+            root["state"] = "OFF";});
+          id(mqtt_client).publish("b10-starlink-samsung/switch/b10_-_starlink_-_samsung_relay_1/command", "OFF");
+          id(mqtt_client).publish("somfy/projector", "u");
 
 # away mode turns off all lights, water pump, all appliances (except fridges), lowers blinds, sets thermostat to 'away'
-  -id: away
-   then:
-     - lambda: |-
-         id(all_off).execute();
-         id(mqtt_client).publish("g6-thermostat/climate/bedroom_ac/away/command", "ON");
-         id(mqtt_client).publish("g6-thermostat/climate/living_room_ac/away/command", "ON");
-#        add blinds down
+  - id: away
+    then:
+      - lambda: |-
+          id(all_off).execute();
+          id(mqtt_client).publish("g6-thermostat/climate/bedroom_ac/away/command", "ON");
+          id(mqtt_client).publish("g6-thermostat/climate/living_room_ac/away/command", "ON");
+          id(blinds_closed).execute();
 
 # home_day mode restores power, raises blinds, sets thermostat
-  -id: home_day
-   then:
-     - lambda: |-
-         id(mqtt_client).publish("g3-waterpump/switch/g3_-_waterpump_relay/command", "ON");
-         id(appliances_on).execute();
-         id(mqtt_client).publish("g6-thermostat/climate/bedroom_ac/away/command", "OFF");
-         id(mqtt_client).publish("g6-thermostat/climate/living_room_ac/away/command", "OFF");
-#        raise blinds
+  - id: home_day
+    then:
+      - lambda: |-
+          id(mqtt_client).publish("g3-waterpump/switch/g3_-_waterpump_relay/command", "ON");
+          id(appliances_on).execute();
+          id(mqtt_client).publish("g6-thermostat/climate/bedroom_ac/away/command", "OFF");
+          id(mqtt_client).publish("g6-thermostat/climate/living_room_ac/away/command", "OFF");
+          id(blinds_open).execute();
 
 # home_night mode restores power, lowers blinds, sets thermostat, turns lights on
-  -id: home_night
-   then:
-     - lambda: |-
-         id(mqtt_client).publish("g3-waterpump/switch/g3_-_waterpump_relay/command", "ON");
-         id(appliances_on).execute();
-         id(lights_on).execute();
-         id(mqtt_client).publish("g6-thermostat/climate/bedroom_ac/away/command", "OFF");
-         id(mqtt_client).publish("g6-thermostat/climate/living_room_ac/away/command", "OFF");
-#        lower blinds
+  - id: home_night
+    then:
+      - lambda: |-
+          id(mqtt_client).publish("g3-waterpump/switch/g3_-_waterpump_relay/command", "ON");
+          id(appliances_on).execute();
+          id(lights_on).execute();
+          id(mqtt_client).publish("g6-thermostat/climate/bedroom_ac/away/command", "OFF");
+          id(mqtt_client).publish("g6-thermostat/climate/living_room_ac/away/command", "OFF");
+          id(blinds_closed).execute();
 
 # storage mode ON turns off inverter/charger, turns off all 12V devices (lights, water pump, fridge) and lowers blinds
-  -id: storage_on
-   then:
-     - lambda: |-
-         id(all_off).execute();
-         id(mqtt_client).publish("g6-thermostat/climate/bedroom_ac/mode/command", "OFF");
-         id(mqtt_client).publish("g6-thermostat/climate/living_room_ac/mode/command", "OFF");
-         id(mqtt_client).publish("venus-home/W/d41243b5183f/vebus/276/Mode", [=] (JsonObject root) { 
-           root["value"] = 4;});
-#        lower blinds
+  - id: storage_on
+    then:
+      - lambda: |-
+          id(all_off).execute();
+          id(mqtt_client).publish("g6-thermostat/climate/bedroom_ac/mode/command", "OFF");
+          id(mqtt_client).publish("g6-thermostat/climate/living_room_ac/mode/command", "OFF");
+          id(mqtt_client).publish_json("venus-home/W/d41243b5183f/vebus/276/Mode", [=] (JsonObject root) { 
+            root["value"] = 4;});
+          id(blinds_closed).execute();
 #        turn off 12V to fridge
 
 # storage mode OFF turns on inverter/charger (charger mode) and raises blinds
-  -id: storage_off
-   then:
-     - lambda: |-
-         id(mqtt_client).publish("venus-home/W/d41243b5183f/vebus/276/Mode", [=] (JsonObject root) {
-           root["value"] = 1;});
-#        raise blinds
+  - id: storage_off
+    then:
+      - lambda: |-
+          id(mqtt_client).publish_json("venus-home/W/d41243b5183f/vebus/276/Mode", [=] (JsonObject root) {
+            root["value"] = 1;});
+          id(blinds_open).execute();
