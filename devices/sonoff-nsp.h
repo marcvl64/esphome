@@ -1,9 +1,21 @@
 #include "esphome.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
+// The Dometic A/C requires a continuous pulse train on the control line — it
+// stops the moment the signal stops. Running that train inside ESPHome's
+// loop() blocks the main task for ~250 ms per pattern, which starves WiFi /
+// MQTT and eventually trips the watchdog (silent reboots every few minutes).
+//
+// Fix: emit the pattern from a dedicated FreeRTOS task. The task busy-loops
+// the pulses, but FreeRTOS preempts at every tick (1 ms), and a vTaskDelay(1)
+// between iterations hands the scheduler back to ESPHome / WiFi / MQTT. The
+// Dometic still sees an effectively continuous stream.
 class AC_Control : public Component {
   public:
     int AC_signal_genPIN;
-    int AC_command;
+    volatile int AC_command = 0;   // shared with task; volatile, single 32-bit aligned int is atomic on ESP32
+
     AC_Control(int pin, esphome::template_::TemplateNumber *&_command)
     {
       AC_signal_genPIN = pin;
@@ -12,30 +24,42 @@ class AC_Control : public Component {
 
     void setup() override {
       pinMode(AC_signal_genPIN, OUTPUT);
+      // Pin to APP_CPU (core 1) so we don't disturb WiFi/BT on PRO_CPU (core 0).
+      // Same priority as the Arduino loop task → FreeRTOS round-robin time-slices.
+      xTaskCreatePinnedToCore(
+        &AC_Control::task_trampoline,
+        "ac_ctrl",
+        4096,
+        this,
+        1,
+        nullptr,
+        1
+      );
     }
 
     void loop() override {
-      if (AC_command==0) {
-        AC_off();
-//        ESP_LOGD("custom", "Turn off AC. Command = %d, PIN = %d", AC_command, AC_signal_genPIN);
-      }
-      if (AC_command==1) {
-        AC_fan_low();
-//        ESP_LOGD("custom", "Turn on low fan");
-      }
-      if (AC_command==2) {
-        AC_fan_high();
-//        ESP_LOGD("custom", "Turn on high fan");
-      }
-      if (AC_command==3) {
-        AC_cool_low();
-//        ESP_LOGD("custom", "Turn on AC, low fan speed");
-      }
-      if (AC_command==4) {
-        AC_cool_high();
-//        ESP_LOGD("custom", "Turn on AC, high fan speed");
+      // Intentionally empty — pulse generation runs in the FreeRTOS task above.
+    }
+
+  private:
+    static void task_trampoline(void *arg) {
+      static_cast<AC_Control*>(arg)->task_run();
+    }
+
+    void task_run() {
+      for (;;) {
+        switch (AC_command) {
+          case 0: AC_off();       break;
+          case 1: AC_fan_low();   break;
+          case 2: AC_fan_high();  break;
+          case 3: AC_cool_low();  break;
+          case 4: AC_cool_high(); break;
+        }
+        vTaskDelay(1);  // yield ~1 tick so other tasks always run
       }
     }
+
+  public:
 
     void AC_off() {
       // Add instructions
