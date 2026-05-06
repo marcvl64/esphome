@@ -27,8 +27,47 @@ globals:
 # ALL BELOW NEXTION VARIABLES ARE GLOBAL VARIABLES AND WILL UPDATE IN THE BACKGROUND
 
 mqtt:
+  # Venus OS only publishes on `N/...` topics while it receives keepalives.
+  # Without these, battsoc/battpower/acinput/etc. stay at their Program.s
+  # defaults and the Victron page shows zeros forever. See `interval:` below
+  # for the periodic refresh that keeps Venus publishing past the first 60s.
+  on_connect:
+    - mqtt.publish:
+        topic: venus-home/R/d41243b5183f/keepalive
+        payload: ""
+    # Give retained messages a moment to arrive (sensor states from other
+    # ESPHome devices, etc.), then push the climate state into the Nextion
+    # globals. The thermostat component restores from MEMORY but doesn't
+    # reliably re-fire its mode/action lambdas on restore, so the Home page
+    # otherwise renders against the Program.s defaults.
+    - delay: 5s
+    - lambda: |-
+        // Living room: 1=OFF, 2=HEAT_COOL, 3=FAN_ONLY
+        int ml = id(living).mode == CLIMATE_MODE_OFF        ? 1
+               : id(living).mode == CLIMATE_MODE_HEAT_COOL  ? 2 : 3;
+        // Bedroom: 1=OFF, 2=COOL, 3=FAN_ONLY
+        int mb = id(bed).mode    == CLIMATE_MODE_OFF        ? 1
+               : id(bed).mode    == CLIMATE_MODE_COOL       ? 2 : 3;
+        auto action_to_status = [](esphome::climate::ClimateAction a) {
+          switch (a) {
+            case esphome::climate::CLIMATE_ACTION_IDLE:    return 1;
+            case esphome::climate::CLIMATE_ACTION_COOLING: return 2;
+            case esphome::climate::CLIMATE_ACTION_FAN:     return 4;
+            case esphome::climate::CLIMATE_ACTION_HEATING: return 5;
+            default:                                       return 1;
+          }
+        };
+        id(disp1).send_command_printf("model=%d",       ml);
+        id(disp1).send_command_printf("modeb=%d",       mb);
+        id(disp1).send_command_printf("statusl=%d",     action_to_status(id(living).action));
+        id(disp1).send_command_printf("statusb=%d",     action_to_status(id(bed).action));
+        id(disp1).send_command_printf("targettempl=%d", (int)(id(living).target_temperature_high * 9.0/5.0 + 32.0));
+        id(disp1).send_command_printf("targettempb=%d", (int)(id(bed).target_temperature        * 9.0/5.0 + 32.0));
+        if (id(active_page).state == 0) {
+          id(disp1).send_command_printf("click m0,1");
+        }
   on_json_message:
-    - topic: venus-home/N/d41243b5183f/vebus/276/Ac/ActiveIn/L1/P 
+    - topic: venus-home/N/d41243b5183f/vebus/276/Ac/ActiveIn/L1/P
       then:
         - lambda: 'id(disp1).send_command_printf("acinput=%d",int(x["value"]));' 
 
@@ -106,9 +145,20 @@ mqtt:
                 id(disp1).send_command_printf("tr_t=%d",int(x["tr"]["temperature"])); 
               } else if (kv.key() == "spare") {
                 id(disp1).send_command_printf("spare_p=%d",int(x["spare"]["psi"])); 
-                id(disp1).send_command_printf("spare_t=%d",int(x["spare"]["temperature"])); 
+                id(disp1).send_command_printf("spare_t=%d",int(x["spare"]["temperature"]));
               }
             }
+
+# Keep Venus OS publishing on the N/* topics. Without periodic keepalives
+# Venus stops sending updates ~60s after the last keepalive, so the Victron
+# page goes stale.
+interval:
+  - interval: 30s
+    then:
+      - mqtt.publish:
+          topic: venus-home/R/d41243b5183f/keepalive
+          payload: ""
+
 #############################################################
 ########### CONFIGURE NEXTION SCREEN ########################
 #############################################################
@@ -185,13 +235,42 @@ sensor:
   - platform: nextion
     variable_name: dp
     id: active_page
+    # When the active page changes (including the initial Bootup → Home
+    # transition), refresh Home page text components from cache. Local
+    # components only exist in RAM while their page is loaded, so writes
+    # made before that point are no-ops; this catches them up.
+    on_value:
+      then:
+        - delay: 100ms      # let the page's Postinitialize settle first
+        - lambda: |-
+            if (id(active_page).state == 0) {
+              if (!std::isnan(id(tb_t).state)) {
+                id(disp1).set_component_text_printf("Home.tb", "%.1f \xb0""F", id(tb_t).state * 9.0/5.0 + 32.0);
+              }
+              if (!std::isnan(id(tl_t).state)) {
+                id(disp1).set_component_text_printf("Home.tl", "%.1f \xb0""F", id(tl_t).state * 9.0/5.0 + 32.0);
+              }
+              if (!std::isnan(id(hb_t).state)) {
+                id(disp1).set_component_text_printf("Home.hb", "%.1f", id(hb_t).state);
+              }
+              if (!std::isnan(id(hl_t).state)) {
+                id(disp1).set_component_text_printf("Home.hl", "%.1f", id(hl_t).state);
+              }
+            }
 
 # RETRIEVE TEMP & HUMIDITY
-# FROM EXTERNAL SENSORS 
+# FROM EXTERNAL SENSORS
+# Template sensors cache the last value from MQTT so that on page transitions
+# (and after the Bootup race) we can re-push them to the Nextion via the
+# active_page on_value handler above.
   - platform: template
     id: tb_t
   - platform: template
     id: tl_t
+  - platform: template
+    id: hb_t
+  - platform: template
+    id: hl_t
   - platform: mqtt_subscribe
     id: tb
     topic: g1-bedroom-sensor/sensor/bedroom_temperature/state
@@ -216,6 +295,7 @@ sensor:
     on_value:
       then:
         - delay: 0ms
+        - lambda: 'id(hb_t).publish_state(x);'
         - lambda: 'if (id(active_page).state==0){id(disp1).set_component_text_printf("Home.hb", "%.1f", x);};'
 
   - platform: mqtt_subscribe
@@ -224,6 +304,7 @@ sensor:
     on_value:
       then:
         - delay: 0ms
+        - lambda: 'id(hl_t).publish_state(x);'
         - lambda: 'if (id(active_page).state==0){id(disp1).set_component_text_printf("Home.hl", "%.1f", x);};'
 
 #############################################################
