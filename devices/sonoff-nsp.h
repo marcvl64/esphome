@@ -1511,378 +1511,534 @@ class AC_Control : public Component {
       digitalWrite(AC_signal_genPIN, HIGH);  // sets the digital pin AC_signal_genPIN off
       delay(175);            // waits for a second
     }
-
     void AC_heat() {
-      // Add instructions
-      digitalWrite(AC_signal_genPIN, LOW);// sets the digital pin 13 on
-      delayMicroseconds(1000);// waits for a second
-      digitalWrite(AC_signal_genPIN, HIGH);// sets the digital pin 13 AC_signal_genPIN
-      delayMicroseconds(500);// waits for half a second
-    
+      // Reverse-engineered from a Saleae capture of the OEM Dometic
+      // CCC thermostat — 105 pulse pairs over ~80 ms.
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(4120);
+      delayMicroseconds(1018);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(789);
-    
+      delayMicroseconds(516);
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(520);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-      
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      //
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(2000);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(780);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(3090);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(793);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(528);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(1000);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(1550);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(778);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(1000);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-      //
-      
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(790);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(528);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(2068);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(780);
-    
-      //
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(4119);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(790);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(530);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(1000);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(2068);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(1000);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(1000);/////////////
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    //
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    ///7
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
+      delayMicroseconds(772);
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    /////////////////////////////////
+      delayMicroseconds(513);
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(5);
-    
+      delayMicroseconds(519);
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(5);
-    
+      delayMicroseconds(522);
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(5);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(769);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(507);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(1027);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(513);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(522);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    //7
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(2000);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(1000);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    ///
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);            
-    //////////******************
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(5);        
-    
+      delayMicroseconds(772);
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(5);
-    
+      delayMicroseconds(513);
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(5);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    ///////////////////////////////////****7
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
+      delayMicroseconds(519);
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    ///////////////
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(519);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(769);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(507);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(513);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(519);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(522);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(519);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(769);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(507);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(513);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(5);//
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(519);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(522);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(772);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(513);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    //7///////////////////////////////////////////////////////////////////////////////////
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    /////////**********************
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
-      digitalWrite(AC_signal_genPIN, HIGH);
-      delayMicroseconds(500);
-    
-      digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(513);
       digitalWrite(AC_signal_genPIN, HIGH);
       delayMicroseconds(5);
-    
+
       digitalWrite(AC_signal_genPIN, LOW);
-      delayMicroseconds(500);
+      delayMicroseconds(510);
       digitalWrite(AC_signal_genPIN, HIGH);
-      delay(175);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(513);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(513);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(769);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(507);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(513);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(519);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(513);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(510);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(513);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(989);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(540);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(509);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(505);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(514);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(505);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(505);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(506);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(502);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(509);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(527);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(506);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(502);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(509);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(505);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(514);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(506);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(502);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(509);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(505);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(527);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(506);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(502);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(509);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(5);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(506);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(506);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(502);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(1018);
+
+      digitalWrite(AC_signal_genPIN, LOW);
+      delayMicroseconds(505);
+      digitalWrite(AC_signal_genPIN, HIGH);
+      delayMicroseconds(2063);
+
+      delay(175);  // inter-frame idle gap
     }
 };  
