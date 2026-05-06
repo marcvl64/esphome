@@ -1,10 +1,15 @@
 # Nextion controller
+# Version 2.0
+#   - Integrated heating option in Dometic Living Room thermostat
+#   - Cleaned up a lot of old code
+
 substitutions:
   node_name: g6-thermostat 
   friendly_name: Thermostat 
   target_temp_normal: "70 F"
   target_temp_away: "75 F"
-  tft_url: http://192.168.50.37:8123/local/nspanel_beastie.tft
+  target_temp_heat_away: "60 F"
+  tft_url: http://homeassistant.local:8123/local/nspanel_beastie.tft
 
 packages:
   device_base: !include devices/sonoff-nsp.yaml
@@ -19,6 +24,8 @@ globals:
     initial_value: "1" # Screen background set to grey
 
 # SUBSCRIBE TO MQTT TOPICS AND SEND UPDATED VALUES TO NEXTION
+# ALL BELOW NEXTION VARIABLES ARE GLOBAL VARIABLES AND WILL UPDATE IN THE BACKGROUND
+
 mqtt:
   on_json_message:
     - topic: venus-home/N/d41243b5183f/vebus/276/Ac/ActiveIn/L1/P 
@@ -109,6 +116,7 @@ mqtt:
 display:
   - platform: nextion
     id: disp1
+    exit_reparse_on_start: true
     uart_id: tf_uart
     tft_url: $tft_url
     on_setup:
@@ -129,9 +137,9 @@ display:
 #            );
         - rtttl.play: "twobits:d=4,o=5,b=220:c6,8g,8g,a,g,p,b,c6"
 
-#################################################################################
-########### DEFINE AC ACTIONS 0:OFF, 1:LOW_FAN, 2: HIGH_FAN, 3: AC_LOW, 4:AC_HIGH
-#################################################################################
+#########################################################################################
+########### DEFINE AC ACTIONS 0:OFF, 1:LOW_FAN, 2: HIGH_FAN, 3: AC_LOW, 4:AC_HIGH 5: HEAT
+########################################################################################
 number:
   - platform: template
     id: ac_control_bed
@@ -144,7 +152,7 @@ number:
   - platform: template
     id: ac_control_living
     min_value: 0
-    max_value: 4
+    max_value: 5
     step: 1
     internal: true
     optimistic: true
@@ -173,7 +181,7 @@ custom_component:
 
 sensor:
 # RETRIEVE NEXTION ACTIVE PAGE
-# 0:HOME, 1: VICTRON, 2: TANK, 3: TPMS, 4: SLEEP, 5: BOOTUP SCREEN ##
+# 0:HOME, 1: VICTRON, 2: TANK, 3: TPMS, 4: INTERNET, 5:SLEEP, 6: BOOTUP SCREEN ##
   - platform: nextion
     variable_name: dp
     id: active_page
@@ -189,37 +197,40 @@ sensor:
     topic: g1-bedroom-sensor/sensor/bedroom_temperature/state
     on_value:
       then:
-         - delay: 0ms
-         - lambda: 'id(tb_t).publish_state(x);'
-#        - lambda: 'id(disp1).set_component_text_printf("Home.tb", "%.1f ""\xb0""F", x * (9.0/5.0) +32.0);'
-#
+        - delay: 0ms
+        - lambda: 'id(tb_t).publish_state(x);'
+        - lambda: 'if (id(active_page).state==0){id(disp1).set_component_text_printf("Home.tb", "%.1f ""\xb0""F", x * (9.0/5.0) +32.0);};'
+
   - platform: mqtt_subscribe
     id: tl
     topic: g2-living-room-sensor/sensor/living_room_temperature/state
     on_value:
-     then:
-         - delay: 0ms
-         - lambda: 'id(tl_t).publish_state(x);'
-#        - lambda: 'id(disp1).set_component_text_printf("Home.tl", "%.1f ""\xb0""F", x * (9.0/5.0) +32.0);'
-#
-#  - platform: mqtt_subscribe
-#    id: hb
-#    topic: g1-bedroom-sensor/sensor/bedroom_humidity/state
-#    on_value:
-#      then:
-#        - lambda: 'id(disp1).set_component_text_printf("Home.hb", "%.1f", x);'
-#
-#  - platform: mqtt_subscribe
-#    id: hl
-#    topic: g2-living-room-sensor/sensor/living_room_humidity/state
-#    on_value:
-#      then:
-#        - lambda: 'id(disp1).set_component_text_printf("Home.hl", "%.1f", x);'
+      then:
+        - delay: 0ms
+        - lambda: 'id(tl_t).publish_state(x);'
+        - lambda: 'if (id(active_page).state==0){id(disp1).set_component_text_printf("Home.tl", "%.1f ""\xb0""F", x * (9.0/5.0) +32.0);};'
+
+  - platform: mqtt_subscribe
+    id: hb
+    topic: g1-bedroom-sensor/sensor/bedroom_humidity/state
+    on_value:
+      then:
+        - delay: 0ms
+        - lambda: 'if (id(active_page).state==0){id(disp1).set_component_text_printf("Home.hb", "%.1f", x);};'
+
+  - platform: mqtt_subscribe
+    id: hl
+    topic: g2-living-room-sensor/sensor/living_room_humidity/state
+    on_value:
+      then:
+        - delay: 0ms
+        - lambda: 'if (id(active_page).state==0){id(disp1).set_component_text_printf("Home.hl", "%.1f", x);};'
 
 #############################################################
 #############################################################
 ########### RETRIEVE BUILT-IN TEMP SENSOR   #################
-########### DISPLAY ON NEXTION SCREEN       #################
+########### NOT DOING ANYTHING WITH IT      #################
+########### THERMOSTAT RELIES ON EXT. TEMP SENSORS ##########
 #############################################################
   - platform: ntc
     id: temperature
@@ -228,6 +239,7 @@ sensor:
       b_constant: 3950
       reference_temperature: 25°C
       reference_resistance: 10kOhm
+# UNCOMMENT THESE LINES IF WE YOU WANT TO USE THE BUILT-IN TEMP SENSOR
 #    name: $friendly_name Temperature
 #    on_value:
 #      then:
@@ -237,7 +249,7 @@ sensor:
 
 #############################################################
 ########### RETRIEVE THERMOSTAT MODE     ####################
-########### 1:OFF, 2: COOL, 3: FAN       ####################
+########### 1:OFF, 2: AUTO, 3: FAN       ####################
 #############################################################
   - platform: nextion
     name: "AC Mode Living"
@@ -252,7 +264,7 @@ sensor:
                 return CLIMATE_MODE_OFF;
               }
               else if (id(mode_living).state == 2) {
-                return CLIMATE_MODE_COOL;
+                return CLIMATE_MODE_HEAT_COOL;
               }
               else {
                 return CLIMATE_MODE_FAN_ONLY;
@@ -394,7 +406,8 @@ binary_sensor:
       then:
         - climate.control:
             id: living
-            target_temperature: !lambda "return id(living).target_temperature + 5.0/9.0;" 
+            target_temperature_high: !lambda "return id(living).target_temperature_high + 5.0/9.0;" 
+            target_temperature_low: !lambda "return id(living).target_temperature_high + 5.0/9.0 - 5;" 
 
   - platform: nextion
     name: $friendly_name Target Temp DOWN Living
@@ -405,7 +418,8 @@ binary_sensor:
       then:
         - climate.control:
             id: living
-            target_temperature: !lambda "return id(living).target_temperature - 5.0/9.0;"
+            target_temperature_high: !lambda "return id(living).target_temperature_high - 5.0/9.0;"
+            target_temperature_low: !lambda "return id(living).target_temperature_high - 5.0/9.0 - 5;"
 
   - platform: nextion
     name: $friendly_name Target Temp UP Bed
@@ -442,6 +456,8 @@ climate:
     min_cooling_off_time: 3s
     min_cooling_run_time: 3s
     max_cooling_run_time: 1h
+    min_heating_off_time: 3s
+    min_heating_run_time: 3s
     min_fanning_off_time: 3s
     min_fanning_run_time: 3s
     min_idle_time: 3s
@@ -449,8 +465,10 @@ climate:
     preset:
       - name: home
         default_target_temperature_high: $target_temp_normal
+        default_target_temperature_low: $target_temp_normal
       - name: away
         default_target_temperature_high: $target_temp_away
+        default_target_temperature_low: $target_temp_heat_away
     idle_action:
       - lambda: |-
          auto call = id(ac_control_living).make_call();
@@ -472,6 +490,13 @@ climate:
          call.perform();
          id(disp1).send_command_printf("statusl=3");
          if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
+    heat_action:
+      - lambda: |-
+         auto call = id(ac_control_living).make_call();
+         call.set_value(5);
+         call.perform();
+         id(disp1).send_command_printf("statusl=5");
+         if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     fan_only_action:
       - lambda: |-
          auto call = id(ac_control_living).make_call();
@@ -480,12 +505,12 @@ climate:
          id(disp1).send_command_printf("statusl=4");
          if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};
     on_state:
-      - lambda: 'id(disp1).send_command_printf("targettempl=%d",int(id(living).target_temperature *(9.0/5.0) + 32.0));'
+      - lambda: 'id(disp1).send_command_printf("targettempl=%d",int(id(living).target_temperature_high *(9.0/5.0) + 32.0));'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     off_mode:
       - lambda: 'id(disp1).send_command_printf("model=1");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
-    cool_mode:
+    auto_mode:
       - lambda: 'id(disp1).send_command_printf("model=2");'
       - lambda: 'if (id(active_page).state==0){id(disp1).send_command_printf("click m0,1");};'
     fan_only_mode:
