@@ -1,0 +1,986 @@
+Page Victron
+    Attributes
+        ID                                  : 0
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Locked                              : no
+        Swide up page ID                    : disabled
+        Swide down page ID                  : disabled
+        Swide left page ID                  : disabled
+        Swide right page ID                 : disabled
+    
+    Events
+        Preinitialize Event
+            hometimer.en=1
+            dim=Home.brightness.val
+            dimtimer.en=1
+            sleeptimer.en=1
+            origin=1
+        
+        Postinitialize Event
+            click m1,0
+            tsw t1,0
+            // Send page number to esphome
+            printh 91
+            prints "dp",0
+            printh 00
+            prints dp,0
+            printh FF FF FF
+            // update all components
+            click m0,1
+        
+Variable (int32) va0
+    Attributes
+        ID   : 13
+        Scope: local
+        Value: 11
+    
+Variable (int32) va1
+    Attributes
+        ID   : 24
+        Scope: local
+        Value: 11
+    
+Variable (int32) va2
+    Attributes
+        ID   : 25
+        Scope: local
+        Value: 11
+    
+Variable (int32) va3
+    Attributes
+        ID   : 26
+        Scope: local
+        Value: 11
+    
+Variable (int32) va4
+    Attributes
+        ID   : 27
+        Scope: local
+        Value: 11
+    
+Variable (int32) battcharging
+    Attributes
+        ID   : 28
+        Scope: local
+        Value: 0
+    
+Variable (int32) n0
+    Attributes
+        ID   : 29
+        Scope: local
+        Value: 0
+    
+Variable (int32) n1
+    Attributes
+        ID   : 30
+        Scope: local
+        Value: 0
+    
+Variable (int32) i
+    Attributes
+        ID   : 31
+        Scope: local
+        Value: 0
+    
+Variable (int32) n2
+    Attributes
+        ID   : 32
+        Scope: local
+        Value: 0
+    
+Variable (int32) n3
+    Attributes
+        ID   : 33
+        Scope: local
+        Value: 0
+    
+Variable (int32) n4
+    Attributes
+        ID   : 34
+        Scope: local
+        Value: 0
+    
+Variable (int32) n5
+    Attributes
+        ID   : 35
+        Scope: local
+        Value: 0
+    
+Variable (int32) n6
+    Attributes
+        ID   : 36
+        Scope: local
+        Value: 0
+    
+Variable (int32) n7
+    Attributes
+        ID   : 37
+        Scope: local
+        Value: 0
+    
+Variable (int32) n8
+    Attributes
+        ID   : 38
+        Scope: local
+        Value: 0
+    
+Variable (int32) n9
+    Attributes
+        ID   : 39
+        Scope: local
+        Value: 0
+    
+Text t0
+    Attributes
+        ID                                  : 14
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 820 W
+        Max. Text Size                      : 10
+    
+    Events
+        Touch Press Event
+            // tapping will run max Amp input through preselected list: 0, 20, 30, 35, 50
+            if(invinput<20)
+            {
+                invinput=20
+                t0.picc=9
+                t1.picc=9
+                va0.val=11
+            }else if(invinput<30)
+            {
+                invinput=30
+                t0.picc=9
+                t1.picc=9
+                va0.val=11
+            }else if(invinput<35)
+            {
+                invinput=35
+                t0.picc=9
+                t1.picc=9
+                va0.val=11
+            }else if(invinput<50)
+            {
+                invinput=50
+                t0.picc=9
+                t1.picc=9
+                va0.val=11
+            }else
+            {
+                invinput=0
+                t0.picc=8
+                t1.picc=8
+                va0.val=10
+            }
+            printh 91
+            prints "invinput",0
+            printh 00
+            prints invinput,0
+            printh FF FF FF
+        
+Text t1
+    Attributes
+        ID                                  : 15
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 50A max
+        Max. Text Size                      : 10
+    
+    Events
+        Touch Press Event
+            if(invinput<20)
+            {
+                invinput=20
+            }else if(invinput<30)
+            {
+                invinput=30
+            }else if(invinput<35)
+            {
+                invinput=35
+            }else if(invinput<50)
+            {
+                invinput=50
+            }else
+            {
+                invinput=0
+            }
+            printh 91
+            prints "invinput",0
+            printh 00
+            prints invinput,0
+            printh FF FF FF
+        
+Text t2
+    Attributes
+        ID                                  : 16
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 750 W
+        Max. Text Size                      : 10
+    
+    Events
+        Touch Press Event
+            // tapping will toggle inverter mode of Victron  on/off
+            if(invmode==1)
+            {
+                invmode=3
+                t2.picc=9
+                va1.val=11
+                t8.txt="Victron On"
+            }else if(invmode==2)
+            {
+                invmode=4
+                t2.picc=8
+                t8.picc=8
+                va1.val=10
+                t8.txt="Victron Off"
+            }else if(invmode==3)
+            {
+                invmode=1
+                t2.picc=8
+                va1.val=10
+                t8.txt="Charging Only"
+            }else if(invmode==4)
+            {
+                invmode=2
+                t2.picc=9
+                t8.picc=9
+                va1.val=11
+                t8.txt="Inverting Only"
+            }
+            printh 91
+            prints "invmode",0
+            printh 00
+            prints invmode,0
+            printh FF FF FF
+        
+Text t3
+    Attributes
+        ID                                  : 17
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 300 W
+        Max. Text Size                      : 10
+    
+Text t4
+    Attributes
+        ID                                  : 18
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : Charging
+        Max. Text Size                      : 12
+    
+Text t5
+    Attributes
+        ID                                  : 19
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 51%
+        Max. Text Size                      : 10
+    
+Text t6
+    Attributes
+        ID                                  : 20
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 350 W
+        Max. Text Size                      : 10
+    
+Text t7
+    Attributes
+        ID                                  : 21
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120 W
+        Max. Text Size                      : 10
+    
+Text t8
+    Attributes
+        ID                                  : 22
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : Inverter On
+        Max. Text Size                      : 20
+    
+    Events
+        Touch Press Event
+            //tapping will toggle Victron on/off
+            if(invmode==1||invmode==2||invmode==3)
+            {
+                invmode=4
+                t8.picc=8
+                t8.txt="Victron Off"
+                va0.val=10
+                va1.val=10
+                va2.val=10
+                t2.picc=8
+            }else if(invmode==4)
+            {
+                invmode=3
+                t8.picc=9
+                t8.txt="Victron On"
+                t2.picc=9
+                va0.val=11
+                va1.val=11
+                va2.val=11
+            }
+            printh 91
+            prints "invmode",0
+            printh 00
+            prints invmode,0
+            printh FF FF FF
+        
+Text left
+    Attributes
+        ID                                  : 40
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : AIRCOs
+        Max. Text Size                      : 10
+    
+Text right
+    Attributes
+        ID                                  : 41
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : TANK LEVEL
+        Max. Text Size                      : 10
+    
+Picture p0
+    Attributes
+        ID                                  : 1
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+Progress Bar j0
+    Attributes
+        ID                                  : 6
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Value                               : 100
+    
+Progress Bar j1
+    Attributes
+        ID                                  : 8
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Value                               : 100
+    
+Progress Bar j2
+    Attributes
+        ID                                  : 9
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Value                               : 100
+    
+Progress Bar j3
+    Attributes
+        ID                                  : 10
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Value                               : 100
+    
+Progress Bar j4
+    Attributes
+        ID                                  : 11
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Value                               : 100
+    
+Hotspot m1
+    Attributes
+        ID                                  : 5
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            //DOWN
+            _j0_dp=j0.y     // drawing start position
+            _j0_1=j0.val*j0.h/100   // overall drawing length based on progress bar value
+            _j0_dl=_j0_do  // height of the first square (downward movement)
+            if(_j0_dl>_j0_1)
+            {
+                _j0_dl=_j0_1 // if height of 1st square is more than total drawing length, reset height of 1st square
+            }
+            _j0_1-=_j0_dl  // remaining drawing height
+            _j0_dn=_j0_1%_j0_dim  // height of last square
+            _j0_1=_j0_1-_j0_dn/_j0_dim  //Number of full squares in between
+            xpic j0.x,_j0_dp,_j0_dim,_j0_dl,0,_j0_dim-_j0_dl,va0.val  //draw first partial square (downward movement)
+            _j0_dp+=_j0_dl //move the drawing pointer forward
+            for(_j0_i=0;_j0_i<_j0_1;_j0_i++)
+            {
+                xpic j0.x,_j0_dp,_j0_dim,_j0_dim,0,0,va0.val  // draw full square
+                _j0_dp+=_j0_dim    // move drawing pointer forward
+            }
+            xpic j0.x,_j0_dp,_j0_dim,_j0_dn,0,0,va0.val  // draw last partial square
+            _j0_dp+=_j0_dn // move drawing pointer forward
+            _j0_1=j0.h+j0.y-_j0_dp  // remainder for the background rectangle
+            fill j0.x,_j0_dp,_j0_1,j0.h,j0.bco // draw the background
+            //
+            //UP
+            _j1_dp=j1.y     // drawing start position
+            _j1_1=j1.val*j1.h/100   // overall drawing length based on progress bar value
+            _j1_dl=_j1_dim-_j1_do  // height of the first square (upward movement)
+            if(_j1_dl>_j1_1)
+            {
+                _j1_dl=_j1_1 // if height of 1st square is more than total drawing length, reset height of 1st square
+            }
+            _j1_1-=_j1_dl  // remaining drawing height
+            _j1_dn=_j1_1%_j1_dim  // height of last square
+            _j1_1=_j1_1-_j1_dn/_j1_dim  //Number of full squares in between
+            xpic j1.x,_j1_dp,_j1_dim,_j1_dl,0,_j1_do,va1.val  //draw first partial square (upward movement)
+            _j1_dp+=_j1_dl //move the drawing pointer forward
+            for(_j1_i=0;_j1_i<_j1_1;_j1_i++)
+            {
+                xpic j1.x,_j1_dp,_j1_dim,_j1_dim,0,0,va1.val  // draw full square
+                _j1_dp+=_j1_dim    // move drawing pointer forward
+            }
+            xpic j1.x,_j1_dp,_j1_dim,_j1_dn,0,0,va1.val  // draw last partial square
+            _j1_dp+=_j1_dn // move drawing pointer forward
+            _j1_1=j1.h+j1.y-_j1_dp  // remainder for the background rectangle
+            fill j1.x,_j1_dp,_j1_1,j1.h,j1.bco // draw the background
+            //
+            //UP OR DOWN DEPENDING ON VARIABLE ac_charging_battery
+            _j2_dp=j2.y     // drawing start position
+            _j2_1=j2.val*j2.h/100   // overall drawing length based on progress bar value
+            if(ac_charging_battery==1)
+            {
+                _j2_dl=_j2_do  // height of the first square (downward movement)
+            }else
+            {
+                _j2_dl=_j2_dim-_j2_do  // height of the first square (upward movement)
+            }
+            if(_j2_dl>_j2_1)
+            {
+                _j2_dl=_j2_1 // if height of 1st square is more than total drawing length, reset height of 1st square
+            }
+            _j2_1-=_j2_dl  // remaining drawing height
+            _j2_dn=_j2_1%_j2_dim  // height of last square
+            _j2_1=_j2_1-_j2_dn/_j2_dim  //Number of full squares in between
+            if(ac_charging_battery==1)
+            {
+                xpic j2.x,_j2_dp,_j2_dim,_j2_dl,0,_j2_dim-_j2_dl,va2.val  //draw first partial square (downward movement)
+            }else
+            {
+                xpic j2.x,_j2_dp,_j2_dim,_j2_dl,0,_j2_do,va2.val  //draw first partial square (upward movement)
+            }
+            _j2_dp+=_j2_dl //move the drawing pointer forward
+            for(_j2_i=0;_j2_i<_j2_1;_j2_i++)
+            {
+                xpic j2.x,_j2_dp,_j2_dim,_j2_dim,0,0,va2.val  // draw full square
+                _j2_dp+=_j2_dim    // move drawing pointer forward
+            }
+            xpic j2.x,_j2_dp,_j2_dim,_j2_dn,0,0,va2.val  // draw last partial square
+            _j2_dp+=_j2_dn // move drawing pointer forward
+            _j2_1=j2.h+j2.y-_j2_dp  // remainder for the background rectangle
+            fill j2.x,_j2_dp,_j2_1,j2.h,j2.bco // draw the background
+            //
+            //UP
+            _j3_dp=j3.y     // drawing start position
+            _j3_1=j3.val*j3.h/100   // overall drawing length based on progress bar value
+            _j3_dl=_j3_dim-_j3_do  // height of the first square (upward movement)
+            if(_j3_dl>_j3_1)
+            {
+                _j3_dl=_j3_1 // if height of 1st square is more than total drawing length, reset height of 1st square
+            }
+            _j3_1-=_j3_dl  // remaining drawing height
+            _j3_dn=_j3_1%_j3_dim  // height of last square
+            _j3_1=_j3_1-_j3_dn/_j3_dim  //Number of full squares in between
+            xpic j3.x,_j3_dp,_j3_dim,_j3_dl,0,_j3_do,va3.val  //draw first partial square (upward movement)
+            _j3_dp+=_j3_dl //move the drawing pointer forward
+            for(_j3_i=0;_j3_i<_j3_1;_j3_i++)
+            {
+                xpic j3.x,_j3_dp,_j3_dim,_j3_dim,0,0,va3.val  // draw full square
+                _j3_dp+=_j3_dim    // move drawing pointer forward
+            }
+            xpic j3.x,_j3_dp,_j3_dim,_j3_dn,0,0,va3.val  // draw last partial square
+            _j3_dp+=_j3_dn // move drawing pointer forward
+            _j3_1=j3.h+j3.y-_j3_dp  // remainder for the background rectangle
+            fill j3.x,_j3_dp,_j3_1,j3.h,j3.bco // draw the background
+            //
+            //DOWN
+            _j4_dp=j4.y     // drawing start position
+            _j4_1=j4.val*j4.h/100   // overall drawing length based on progress bar value
+            _j4_dl=_j4_do  // height of the first square (downward movement)
+            if(_j4_dl>_j4_1)
+            {
+                _j4_dl=_j4_1 // if height of 1st square is more than total drawing length, reset height of 1st square
+            }
+            _j4_1-=_j4_dl  // remaining drawing height
+            _j4_dn=_j4_1%_j4_dim  // height of last square
+            _j4_1=_j4_1-_j4_dn/_j4_dim  //Number of full squares in between
+            xpic j4.x,_j4_dp,_j4_dim,_j4_dl,0,_j4_dim-_j4_dl,va4.val  //draw first partial square (downward movement)
+            _j4_dp+=_j4_dl //move the drawing pointer forward
+            for(_j4_i=0;_j4_i<_j4_1;_j4_i++)
+            {
+                xpic j4.x,_j4_dp,_j4_dim,_j4_dim,0,0,va4.val  // draw full square
+                _j4_dp+=_j4_dim    // move drawing pointer forward
+            }
+            xpic j4.x,_j4_dp,_j4_dim,_j4_dn,0,0,va4.val  // draw last partial square
+            _j4_dp+=_j4_dn // move drawing pointer forward
+            _j4_1=j4.h+j4.y-_j4_dp  // remainder for the background rectangle
+            fill j4.x,_j4_dp,_j4_1,j4.h,j4.bco // draw the background
+            doevents
+        
+        Touch Release Event
+            vis j0,0
+            _j0_dim=j0.w
+            _j0_tm.en=1
+            vis j1,0
+            _j1_dim=j1.w
+            vis j2,0
+            _j2_dim=j2.w
+            vis j3,0
+            _j3_dim=j3.w
+            vis j4,0
+            _j4_dim=j4.w
+        
+Hotspot m0
+    Attributes
+        ID                                  : 12
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            // update  all components on page, depending on change in variables
+            // note that 1 variable change may have a cascading effect
+            // example: if acoutput value drops below acinput value, current into the battery changes direction
+            //
+            // 1. UPDATE ALL TEXT COMPONENTS
+            //1. UPDATE AC INPUT IF CHANGED
+            if(i.val==1&&n0.val!=acinput)
+            {
+                covx acinput,t0.txt,0,0
+                t0.txt+=" W"
+                n0.val=acinput
+            }else if(i.val==2&&n1.val!=invinput)
+            {
+                covx invinput,t1.txt,0,0
+                t1.txt+=" A max"
+                n1.val=invinput
+            }else if(i.val==3&&n2.val!=acoutput)
+            {
+                covx acoutput,t2.txt,0,0
+                t2.txt+=" W"
+                n2.val=acoutput
+            }else if(i.val==4&&n3.val!=battpower)
+            {
+                covx battpower,t3.txt,0,0
+                t3.txt+=" W"
+                n3.val=battpower
+            }else if(i.val==5)
+            {
+                battcharging.val=acinput-acoutput+solarpower-dcoutput
+                if(battcharging.val>=0&&n4.val!=battcharging.val)
+                {
+                    t4.txt="Charging"
+                }else if(n4.val!=battcharging.val)
+                {
+                    t4.txt="Discharging"
+                }
+                n4.val=battcharging.val
+            }else if(i.val==6&&n5.val!=battsoc)
+            {
+                covx battsoc,t5.txt,0,0
+                t5.txt+=" %"
+                n5.val=battsoc
+            }else if(i.val==7&&n6.val!=solarpower)
+            {
+                covx solarpower,t6.txt,0,0
+                t6.txt+=" W"
+                n6.val=solarpower
+            }else if(i.val==8&&n7.val!=dcoutput)
+            {
+                covx dcoutput,t7.txt,0,0
+                t7.txt+=" W"
+                n7.val=dcoutput
+            }else if(i.val==9&&n8.val!=invmode)
+            {
+                spstr ",Charging Only,Inverting Only,Victron On,Victron Off",t8.txt,",",invmode
+                if(n8.val==4&&invmode==3)
+                {
+                    t0.picc=9
+                    t1.picc=9
+                    t2.picc=9
+                    t8.picc=9
+                    va0.val=11
+                    va1.val=11
+                    va2.val=11
+                }else if(n8.val==4&&invmode==2)
+                {
+                    t0.picc=9
+                    t1.picc=9
+                    t2.picc=9
+                    t8.picc=9
+                    va0.val=11
+                    va1.val=11
+                }else if(n8.val==4&&invmode==1)
+                {
+                    t0.picc=9
+                    t1.picc=9
+                    t8.picc=9
+                    va0.val=11
+                    va2.val=11
+                }else if(n8.val==3&&invmode==1)
+                {
+                    t2.picc=8
+                    va1.val=10
+                }else if(n8.val==3&&invmode==2)
+                {
+                    va2.val=10
+                }else if(n8.val==3&&invmode==4)
+                {
+                    t0.picc=8
+                    t1.picc=8
+                    t2.picc=8
+                    t8.picc=8
+                    va0.val=10
+                    va1.val=10
+                    va2.val=10
+                }else if(n8.val==2&&invmode==1)
+                {
+                    t2.picc=8
+                    va1.val=10
+                    va2.val=11
+                }else if(n8.val==2&&invmode==3)
+                {
+                    va2.val=11
+                }else if(n8.val==2&&invmode==4)
+                {
+                    t0.picc=8
+                    t1.picc=8
+                    t2.picc=8
+                    t8.picc=8
+                    va0.val=10
+                    va1.val=10
+                }else if(n8.val==1&&invmode==2)
+                {
+                    t2.picc=9
+                    va1.val=11
+                    va2.val=10
+                }else if(n8.val==1&&invmode==3)
+                {
+                    t2.picc=9
+                    va1.val=11
+                }else if(n8.val==1&&invmode==4)
+                {
+                    t0.picc=8
+                    t1.picc=8
+                    t8.picc=8
+                    va0.val=10
+                    va2.val=10
+                }
+                n8.val=invmode
+            }else if(i.val==10)
+            {
+                if(acinput>acoutput)
+                {
+                    ac_charging_battery=1
+                }else
+                {
+                    ac_charging_battery=0
+                }
+            }else if(i.val==0)
+            {
+                if(battsoc>=94&&n9.val!=9)
+                {
+                    p0.pic=13
+                    t4.pic=23
+                    t5.pic=15
+                    t3.pic=23
+                    n9.val=9
+                }else if(battsoc<94&&battsoc>=81&&n9.val!=8)
+                {
+                    p0.pic=12
+                    t4.pic=22
+                    t5.pic=15
+                    t3.pic=23
+                    n9.val=8
+                }else if(battsoc<81&&battsoc>=69&&n9.val!=7)
+                {
+                    p0.pic=12
+                    t4.pic=20
+                    t5.pic=15
+                    t3.pic=23
+                    n9.val=7
+                }else if(battsoc<69&&battsoc>=56&&n9.val!=6)
+                {
+                    p0.pic=12
+                    t4.pic=24
+                    t5.pic=18
+                    t3.pic=23
+                    n9.val=6
+                }else if(battsoc<56&&battsoc>=44&&n9.val!=5)
+                {
+                    p0.pic=12
+                    t4.pic=24
+                    t5.pic=14
+                    t3.pic=23
+                    n9.val=5
+                }else if(battsoc<44&&battsoc>=31&&n9.val!=4)
+                {
+                    p0.pic=12
+                    t4.pic=24
+                    t5.pic=17
+                    t3.pic=23
+                    n9.val=4
+                }else if(battsoc<31&&battsoc>=19&&n9.val!=3)
+                {
+                    p0.pic=12
+                    t4.pic=24
+                    t5.pic=16
+                    t3.pic=21
+                    n9.val=3
+                }else if(battsoc<19&&battsoc>=6&&n9.val!=2)
+                {
+                    p0.pic=12
+                    t4.pic=24
+                    t5.pic=16
+                    t3.pic=19
+                    n9.val=2
+                }else if(battsoc<6&&n9.val!=1)
+                {
+                    p0.pic=12
+                    t4.pic=24
+                    t5.pic=16
+                    t3.pic=24
+                    n9.val=1
+                }
+            }
+        
+Hotspot m5
+    Attributes
+        ID                                  : 23
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            //Tapping will toggle charger mode of Victron on/off
+            if(invmode==1)
+            {
+                invmode=4
+                t8.txt="Victron Off"
+                t8.picc=8
+                va2.val=10
+            }else if(invmode==2)
+            {
+                invmode=3
+                t8.txt="Victron On"
+                va2.val=11
+            }else if(invmode==3)
+            {
+                invmode=2
+                t8.txt="Inverting Only"
+                va2.val=10
+            }else if(invmode==4)
+            {
+                invmode=1
+                t8.txt="Charging Only"
+                t8.picc=9
+                va2.val=11
+            }
+        
+Timer swipestore
+    Attributes
+        ID         : 2
+        Scope      : local
+        Period (ms): 50
+        Enabled    : no
+    
+    Events
+        Timer Event
+            swipex=tch0
+            swipey=tch1
+        
+Timer hometimer
+    Attributes
+        ID         : 3
+        Scope      : local
+        Period (ms): 15000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.disgth.val==0)
+            {
+                page Home
+            }
+        
+Timer _j0_tm
+    Attributes
+        ID         : 7
+        Scope      : local
+        Period (ms): 50
+        Enabled    : no
+    
+    Events
+        Timer Event
+            // va variables set color and determine if animated or not
+            // vax=11   - color is blue, animation is running
+            // vax=10   - color is grey, animation is not running
+            // speed up animation by increasing % value
+            if(va0.val==11)
+            {
+                _j0_do+=2%_j0_dim
+            }
+            if(va1.val==11)
+            {
+                _j1_do+=2%_j1_dim
+            }
+            if(va2.val==11)
+            {
+                _j2_do+=2%_j2_dim
+            }
+            if(va3.val==11)
+            {
+                _j3_do+=2%_j3_dim
+            }
+            if(va4.val==11)
+            {
+                _j4_do+=2%_j4_dim
+            }
+            click m1,1
+            click m0,1
+            i.val+=1
+            i.val%=11
+        
+Timer dimtimer
+    Attributes
+        ID         : 42
+        Scope      : local
+        Period (ms): 30000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.disdim.val==0)
+            {
+                dim=Home.brightdd.val
+            }
+        
+Timer sleeptimer
+    Attributes
+        ID         : 43
+        Scope      : local
+        Period (ms): 60000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.dissleep.val==0)
+            {
+                page Screensaver
+            }
+        
+TouchCap tc0
+    Attributes
+        ID   : 4
+        Scope: local
+        Value: 0
+    
+    Events
+        Touch Press Event
+            dim=Home.brightness.val
+            dimtimer.en=1
+            sleeptimer.en=1
+            swipestore.en=1
+        
+        Touch Release Event
+            hometimer.en=1
+            swipestore.en=0
+            // Touch has ended, x
+            if(tch0==0)
+            {
+                swipec=swipex-tch2
+                // From left to right
+                if(swipec>swipedx)
+                {
+                    //go to page on the left - disabled
+                    // page Home
+                    // hometimer.en=0 (only needed when going to Home)
+                }
+                // From right to left
+                swipec2=0-swipedx
+                if(swipec<swipec2)
+                {
+                    // go to page on the right - disabled
+                    //  page Home
+                    // hometimer.en=0 (only needed when going to Home)
+                }
+            }
+            // Touch has ended, y
+            if(tch1==0)
+            {
+                swipec=swipey-tch3
+                // Pull down - From top to bottom
+                if(swipec>100)
+                {
+                    // Pull down page from the top
+                    page Internet
+                }
+                // Pull up - From bottom to top
+                swipec2=0-swipedy
+                if(swipec<swipec2)
+                {
+                    // Pull up page from the bottom
+                    page Internet
+                }
+            }
+        

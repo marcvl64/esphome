@@ -1,0 +1,577 @@
+Page Home
+    Attributes
+        ID                                  : 0
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Locked                              : no
+        Swide up page ID                    : disabled
+        Swide down page ID                  : disabled
+        Swide left page ID                  : disabled
+        Swide right page ID                 : disabled
+    
+    Events
+        Preinitialize Event
+            dim=brightness.val
+            dimtimer.en=1
+            sleeptimer.en=1
+            origin=0
+            // Send page number to esphome
+            printh 91
+            prints "dp",0
+            printh 00
+            prints dp,0
+            printh FF FF FF
+        
+        Postinitialize Event
+            if(model==0) // runs once after boot to initialize page, and never again.
+            {
+                vis ttl,0  // hide target temp (b/c thermostat is OFF)
+                vis ttb,0
+                model=1  //Sets thermostat Living to OFF and tells ESPHome
+                printh 91
+                prints "model",0
+                printh 00
+                prints model,0
+                printh FF FF FF
+                modeb=1  //Sets thermostat Bed to OFF and tells ESPHOME
+                printh 91
+                prints "modeb",0
+                printh 00
+                prints modeb,0
+                printh FF FF FF
+            }
+            // Update all components on page based on global variable content
+            // This ensures display and esphome remain in sync
+            Home.pic=sys0+1 //Restore background
+            click m0,1
+        
+Variable (int32) brightness
+    Attributes
+        ID   : 21
+        Scope: global
+        Value: 100
+    
+Variable (int32) disdim
+    Attributes
+        ID   : 22
+        Scope: global
+        Value: 0
+    
+Variable (int32) va0
+    Attributes
+        ID   : 25
+        Scope: local
+        Value: 0
+    
+Variable (int32) disgth
+    Attributes
+        ID   : 26
+        Scope: global
+        Value: 1
+    
+Variable (int32) brightdd
+    Attributes
+        ID   : 28
+        Scope: global
+        Value: 2
+    
+Variable (int32) dissleep
+    Attributes
+        ID   : 29
+        Scope: global
+        Value: 0
+    
+Variable (int32) va1
+    Attributes
+        ID   : 32
+        Scope: local
+        Value: 0
+    
+Variable (int32) coolingl
+    Attributes
+        ID   : 33
+        Scope: local
+        Value: 0
+    
+Variable (int32) coolingb
+    Attributes
+        ID   : 34
+        Scope: local
+        Value: 0
+    
+Text tl
+    Attributes
+        ID                                  : 6
+        Scope                               : global
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : newtxt
+        Max. Text Size                      : 10
+    
+Text sl
+    Attributes
+        ID                                  : 7
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : Idle
+        Max. Text Size                      : 15
+    
+Text hl
+    Attributes
+        ID                                  : 8
+        Scope                               : global
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : newtxt
+        Max. Text Size                      : 10
+    
+Text ttl
+    Attributes
+        ID                                  : 9
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 70 ºF
+        Max. Text Size                      : 10
+    
+Text tb
+    Attributes
+        ID                                  : 10
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : newtxt
+        Max. Text Size                      : 10
+    
+Text sb
+    Attributes
+        ID                                  : 11
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : Idle
+        Max. Text Size                      : 15
+    
+Text hb
+    Attributes
+        ID                                  : 12
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : newtxt
+        Max. Text Size                      : 10
+    
+Text ttb
+    Attributes
+        ID                                  : 13
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 70 ºF
+        Max. Text Size                      : 10
+    
+Text left
+    Attributes
+        ID                                  : 19
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : TIRE PRESSURE
+        Max. Text Size                      : 15
+    
+Text right
+    Attributes
+        ID                                  : 20
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : POWER
+        Max. Text Size                      : 15
+    
+Crop Picture q0
+    Attributes
+        ID                                  : 1
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            vis ttl,0
+            q8.picc=va1.val+1
+            q9.picc=va1.val+1
+            q0.picc=va1.val  // set this radio button on
+            q1.picc=va1.val+1
+            q2.picc=va1.val+1
+            model=1
+        
+        Touch Release Event
+            printh 91
+            prints "model",0
+            printh 00
+            prints model,0
+            printh FF FF FF
+        
+Crop Picture q1
+    Attributes
+        ID                                  : 2
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            vis ttl,1
+            q8.picc=va1.val
+            q9.picc=va1.val
+            q0.picc=va1.val+1
+            q1.picc=va1.val  // set this radio button on
+            q2.picc=va1.val+1
+            model=2
+        
+        Touch Release Event
+            printh 91
+            prints "model",0
+            printh 00
+            prints model,0
+            printh FF FF FF
+        
+Crop Picture q2
+    Attributes
+        ID                                  : 3
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            vis ttl,1
+            q8.picc=va1.val
+            q9.picc=va1.val
+            q0.picc=va1.val+1
+            q1.picc=va1.val+1
+            q2.picc=va1.val  // set this radio button on
+            model=3
+        
+        Touch Release Event
+            printh 91
+            prints "model",0
+            printh 00
+            prints model,0
+            printh FF FF FF
+        
+Crop Picture q8
+    Attributes
+        ID                                  : 4
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : on press and release
+    
+Crop Picture q9
+    Attributes
+        ID                                  : 5
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : on press and release
+    
+Crop Picture q10
+    Attributes
+        ID                                  : 14
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : on press and release
+    
+Crop Picture q11
+    Attributes
+        ID                                  : 15
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : on press and release
+    
+Crop Picture q4
+    Attributes
+        ID                                  : 16
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            vis ttb,0
+            q10.picc=va1.val+1
+            q11.picc=va1.val+1
+            q4.picc=va1.val  // set this radio button on
+            q5.picc=va1.val+1
+            q6.picc=va1.val+1
+            modeb=1
+        
+        Touch Release Event
+            printh 91
+            prints "modeb",0
+            printh 00
+            prints modeb,0
+            printh FF FF FF
+        
+Crop Picture q5
+    Attributes
+        ID                                  : 17
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            vis ttb,1
+            q10.picc=va1.val
+            q11.picc=va1.val
+            q4.picc=va1.val+1
+            q5.picc=va1.val  // set this radio button on
+            q6.picc=va1.val+1
+            modeb=2
+        
+        Touch Release Event
+            printh 91
+            prints "modeb",0
+            printh 00
+            prints modeb,0
+            printh FF FF FF
+        
+Crop Picture q6
+    Attributes
+        ID                                  : 18
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            vis ttb,1
+            q10.picc=va1.val
+            q11.picc=va1.val
+            q4.picc=va1.val+1
+            q5.picc=va1.val+1
+            q6.picc=va1.val  // set this radio button on
+            modeb=3
+        
+        Touch Release Event
+            printh 91
+            prints "modeb",0
+            printh 00
+            prints modeb,0
+            printh FF FF FF
+        
+Hotspot m0
+    Attributes
+        ID                                  : 31
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            // Update all components on page
+            // First, set the right background/crop images
+            if(statusl==2||statusl==3)
+            {
+                coolingl.val=1
+            }else
+            {
+                coolingl.val=0
+            }
+            if(statusb==2||statusb==3)
+            {
+                coolingb.val=1
+            }else
+            {
+                coolingb.val=0
+            }
+            if(coolingl.val==1&&coolingb.val==0)
+            {
+                // Living room cooling is ON, Bedroom cooling is OFF
+                va1.val=6
+            }else if(coolingl.val==0&&coolingb.val==1)
+            {
+                // Bedroom cooling is ON, living rooom cooling is OFF
+                va1.val=4
+            }else if(coolingl.val==0&&coolingb.val==0)
+            {
+                // No cooling
+                va1.val=0
+            }else
+            {
+                // both bed and living room cooling is on
+                va1.val=2
+            }
+            // Update page background if necessary
+            if(sys0!=va1.val)
+            {
+                Home.pic=va1.val+1
+                sys0=va1.val
+            }
+            // Update thermostat mode buttons
+            if(model==1)
+            {
+                click q0,1
+            }else if(model==2)
+            {
+                click q1,1
+            }else
+            {
+                click q2,1
+            }
+            if(modeb==1)
+            {
+                click q4,1
+            }else if(modeb==2)
+            {
+                click q5,1
+            }else
+            {
+                click q6,1
+            }
+            // Update target temperature fields
+            covx targettempl,ttl.txt,0,0
+            ttl.txt+=" ºF"
+            ttl.picc=va1.val
+            covx targettempb,ttb.txt,0,0
+            ttb.txt+=" ºF"
+            ttb.picc=va1.val
+            // Update AC status
+            spstr ",Idle,Cooling (low),Cooling (high),Fanning",sb.txt,",",statusb
+            spstr ",Idle,Cooling (low),Cooling (high),Fanning",sl.txt,",",statusl
+            sb.picc=va1.val
+            sl.picc=va1.val
+            //Update temperature fields
+            tl.picc=va1.val
+            hl.picc=va1.val
+            tb.picc=va1.val
+            hb.picc=va1.val
+        
+Timer dimtimer
+    Attributes
+        ID         : 23
+        Scope      : local
+        Period (ms): 30000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(disdim.val==0)
+            {
+                dim=brightdd.val
+            }
+        
+Timer swipestore
+    Attributes
+        ID         : 27
+        Scope      : local
+        Period (ms): 50
+        Enabled    : no
+    
+    Events
+        Timer Event
+            swipex=tch0
+            swipey=tch1
+        
+Timer sleeptimer
+    Attributes
+        ID         : 30
+        Scope      : local
+        Period (ms): 60000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(dissleep.val==0)
+            {
+                page Screensaver
+            }
+        
+TouchCap tc0
+    Attributes
+        ID   : 24
+        Scope: local
+        Value: 0
+    
+    Events
+        Touch Press Event
+            dim=brightness.val
+            dimtimer.en=1
+            sleeptimer.en=1
+            swipestore.en=1
+        
+        Touch Release Event
+            swipestore.en=0
+            // Touch has ended, x
+            if(tch0==0)
+            {
+                swipec=swipex-tch2
+                // From left to right
+                if(swipec>swipedx)
+                {
+                    //go to page on the left - disabled
+                    // page Home
+                    // hometimer.en=0 (only needed when going to Home)
+                }
+                // From right to left
+                swipec2=0-swipedx
+                if(swipec<swipec2)
+                {
+                    // go to page on the right - disabled
+                    //  page Home
+                    // hometimer.en=0 (only needed when going to Home)
+                }
+            }
+            // Touch has ended, y
+            if(tch1==0)
+            {
+                swipec=swipey-tch3
+                // Pull down - From top to bottom
+                if(swipec>100)
+                {
+                    // Pull down page from the top
+                    page Internet
+                }
+                // Pull up - From bottom to top
+                swipec2=0-swipedy
+                if(swipec<swipec2)
+                {
+                    // Pull up page from the bottom
+                    page Internet
+                }
+            }
+        

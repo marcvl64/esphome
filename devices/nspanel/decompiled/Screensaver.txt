@@ -1,0 +1,35 @@
+Page Screensaver
+    Attributes
+        ID                                  : 0
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Locked                              : no
+        Swide up page ID                    : disabled
+        Swide down page ID                  : disabled
+        Swide left page ID                  : disabled
+        Swide right page ID                 : disabled
+    
+    Events
+        Preinitialize Event
+            dim=0
+        
+        Postinitialize Event
+            // Send page number to esphome
+            printh 91
+            prints "dp",0
+            printh 00
+            prints dp,0
+            printh FF FF FF
+        
+TouchCap tc0
+    Attributes
+        ID   : 1
+        Scope: local
+        Value: 0
+    
+    Events
+        Touch Press Event
+            page origin
+        

@@ -1,0 +1,415 @@
+Page TPMS
+    Attributes
+        ID                                  : 0
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Locked                              : no
+        Swide up page ID                    : disabled
+        Swide down page ID                  : disabled
+        Swide left page ID                  : disabled
+        Swide right page ID                 : disabled
+    
+    Events
+        Preinitialize Event
+            hometimer.en=1
+            dim=Home.brightness.val
+            dimtimer.en=1
+            sleeptimer.en=1
+            origin=3
+        
+        Postinitialize Event
+            // Send page number to esphome
+            printh 91
+            prints "dp",0
+            printh 00
+            prints dp,0
+            printh FF FF FF
+            // update all components
+            click m0,1
+        
+Variable (string) va0
+    Attributes
+        ID            : 29
+        Scope         : global
+        Text          : newtxt
+        Max. Text Size: 100
+    
+Text left
+    Attributes
+        ID                                  : 2
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : TANK LEVEL
+        Max. Text Size                      : 15
+    
+Text right
+    Attributes
+        ID                                  : 3
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : AIRCOs
+        Max. Text Size                      : 10
+    
+Text t0
+    Attributes
+        ID                                  : 5
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t1
+    Attributes
+        ID                                  : 6
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Text t2
+    Attributes
+        ID                                  : 7
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t3
+    Attributes
+        ID                                  : 8
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Text t4
+    Attributes
+        ID                                  : 9
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t5
+    Attributes
+        ID                                  : 10
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Text t6
+    Attributes
+        ID                                  : 11
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t7
+    Attributes
+        ID                                  : 12
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Text t8
+    Attributes
+        ID                                  : 13
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t9
+    Attributes
+        ID                                  : 14
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Text t10
+    Attributes
+        ID                                  : 15
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t11
+    Attributes
+        ID                                  : 16
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Text t12
+    Attributes
+        ID                                  : 17
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t13
+    Attributes
+        ID                                  : 18
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Text t14
+    Attributes
+        ID                                  : 19
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t15
+    Attributes
+        ID                                  : 20
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Text t16
+    Attributes
+        ID                                  : 21
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 65
+        Max. Text Size                      : 3
+    
+Text t17
+    Attributes
+        ID                                  : 22
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 120
+        Max. Text Size                      : 10
+    
+Picture p0
+    Attributes
+        ID                                  : 1
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+Hotspot m0
+    Attributes
+        ID                                  : 4
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            // update  all components on page
+            covx fl_p,t0.txt,0,0
+            covx fl_t,t1.txt,0,0
+            covx fr_p,t2.txt,0,0
+            covx fr_t,t3.txt,0,0
+            covx dli_p,t4.txt,0,0
+            covx dli_t,t5.txt,0,0
+            covx tl_p,t6.txt,0,0
+            covx tl_t,t7.txt,0,0
+            covx dlo_p,t8.txt,0,0
+            covx dlo_t,t9.txt,0,0
+            covx dri_p,t10.txt,0,0
+            covx dri_t,t11.txt,0,0
+            covx tr_p,t12.txt,0,0
+            covx tr_t,t13.txt,0,0
+            covx dro_p,t14.txt,0,0
+            covx dro_t,t15.txt,0,0
+            covx spare_p,t16.txt,0,0
+            covx spare_t,t17.txt,0,0
+        
+Timer tm0
+    Attributes
+        ID         : 23
+        Scope      : local
+        Period (ms): 50
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            click m0,1
+        
+Timer hometimer
+    Attributes
+        ID         : 24
+        Scope      : local
+        Period (ms): 15000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.disgth.val==0)
+            {
+                page Home
+            }
+        
+Timer dimtimer
+    Attributes
+        ID         : 25
+        Scope      : local
+        Period (ms): 30000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.disdim.val==0)
+            {
+                dim=Home.brightdd.val
+            }
+        
+Timer sleeptimer
+    Attributes
+        ID         : 26
+        Scope      : local
+        Period (ms): 60000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.dissleep.val==0)
+            {
+                page Screensaver
+            }
+        
+Timer swipestore
+    Attributes
+        ID         : 28
+        Scope      : local
+        Period (ms): 50
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            swipex=tch0
+            swipey=tch1
+        
+TouchCap tc0
+    Attributes
+        ID   : 27
+        Scope: local
+        Value: 0
+    
+    Events
+        Touch Press Event
+            dim=Home.brightness.val
+            dimtimer.en=1
+            sleeptimer.en=1
+        
+        Touch Release Event
+            hometimer.en=1
+            swipestore.en=0
+            // Touch has ended, x
+            if(tch0==0)
+            {
+                swipec=swipex-tch2
+                // From left to right
+                if(swipec>swipedx)
+                {
+                    //go to page on the left - disabled
+                    // page Home
+                    // hometimer.en=0 (only needed when going to Home)
+                }
+                // From right to left
+                swipec2=0-swipedx
+                if(swipec<swipec2)
+                {
+                    // go to page on the right - disabled
+                    //  page Home
+                    // hometimer.en=0 (only needed when going to Home)
+                }
+            }
+            // Touch has ended, y
+            if(tch1==0)
+            {
+                swipec=swipey-tch3
+                // Pull down - From top to bottom
+                if(swipec>100)
+                {
+                    // Pull down page from the top
+                    page Internet
+                }
+                // Pull up - From bottom to top
+                swipec2=0-swipedy
+                if(swipec<swipec2)
+                {
+                    // Pull up page from the bottom
+                    page Internet
+                }
+            }
+        

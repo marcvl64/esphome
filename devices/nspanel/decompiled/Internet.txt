@@ -1,0 +1,144 @@
+Page Internet
+    Attributes
+        ID                                  : 0
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Locked                              : no
+        Swide up page ID                    : disabled
+        Swide down page ID                  : disabled
+        Swide left page ID                  : disabled
+        Swide right page ID                 : disabled
+    
+    Events
+        Preinitialize Event
+            hometimer.en=1
+            dim=Home.brightness.val
+            dimtimer.en=1
+            sleeptimer.en=1
+        
+Picture p0
+    Attributes
+        ID                                  : 1
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+Picture p1
+    Attributes
+        ID                                  : 2
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+Timer hometimer
+    Attributes
+        ID         : 3
+        Scope      : local
+        Period (ms): 15000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.disgth.val==0)
+            {
+                page Home
+            }
+        
+Timer sleeptimer
+    Attributes
+        ID         : 4
+        Scope      : local
+        Period (ms): 60000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.dissleep.val==0)
+            {
+                page Screensaver
+            }
+        
+Timer dimtimer
+    Attributes
+        ID         : 5
+        Scope      : local
+        Period (ms): 30000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(Home.disdim.val==0)
+            {
+                dim=Home.brightdd.val
+            }
+        
+Timer swipestore
+    Attributes
+        ID         : 7
+        Scope      : local
+        Period (ms): 50
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            swipex=tch0
+            swipey=tch1
+        
+TouchCap tc0
+    Attributes
+        ID   : 6
+        Scope: local
+        Value: 0
+    
+    Events
+        Touch Press Event
+            dim=Home.brightness.val
+            dimtimer.en=1
+            sleeptimer.en=1
+        
+        Touch Release Event
+            hometimer.en=1
+            swipestore.en=0
+            // Touch has ended, x
+            if(tch0==0)
+            {
+                swipec=swipex-tch2
+                // From left to right
+                if(swipec>swipedx)
+                {
+                    //go to page on the left - disabled
+                    // page Home
+                    // hometimer.en=0 (only needed when going to Home)
+                }
+                // From right to left
+                swipec2=0-swipedx
+                if(swipec<swipec2)
+                {
+                    // go to page on the right - disabled
+                    //  page Home
+                    // hometimer.en=0 (only needed when going to Home)
+                }
+            }
+            // Touch has ended, y
+            if(tch1==0)
+            {
+                swipec=swipey-tch3
+                // Pull down - From top to bottom
+                if(swipec>100)
+                {
+                    // Pull down page from the top
+                    page origin
+                }
+                // Pull up - From bottom to top
+                swipec2=0-swipedy
+                if(swipec<swipec2)
+                {
+                    // Pull up page from the bottom
+                    page origin
+                }
+            }
+        
